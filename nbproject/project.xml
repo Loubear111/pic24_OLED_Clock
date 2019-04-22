@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>final_project_v001</name>
+            <name>pic24_OLED_Clock</name>
             <creation-uuid>8a4efddd-d952-4614-92b3-7790edf01e25</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
