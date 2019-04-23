@@ -1,6 +1,7 @@
 #include <p24Fxxxx.h>
 #include <xc.h>
 #include <stdlib.h>
+#include <math.h>
 
 // PIC24FJ64GA002 Configuration Bit Settings
 // CW1: FLASH CONFIGURATION WORD 1 (see PIC24 Family Reference Manual 24.1)
@@ -21,18 +22,24 @@
                                        // Fail-Safe Clock Monitor is enabled)
 #pragma config FNOSC = FRCPLL      // Oscillator Select (Fast RC Oscillator with PLL module (FRCPLL))
 
-#define DACMASK 0x1FFF
-#define DACBITS 0x1000
-
 #define LCD_CS_SET      PORTBbits.RB2 = 1
 #define LCD_DC_SET      PORTBbits.RB6 = 1
 
 #define LCD_CS_RESET    PORTBbits.RB2 = 0
 #define LCD_DC_RESET    PORTBbits.RB6 = 0
 
-#define LED_SET PORTBbits.RB2 = 1;
+#define LED_SET         PORTBbits.RB2 = 1;
+#define LED_RESET       PORTBbits.RB2 = 0;
 
-volatile unsigned short int sample = DACBITS;
+const unsigned char one [] = {
+0x0C, 0x3C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x3F, 
+};
+
+unsigned char frame_buffer [1024];
+
+void lcd_cmd(unsigned short int packet);
+void lcd_write_pixel(int x, int y, int colour);
+void lcd_update(void);
 
 //Generic delay function
 void delay(unsigned int ms)
@@ -43,20 +50,6 @@ void delay(unsigned int ms)
         asm("nop");
         ms--;
     }
-}
-
-void __attribute__((__interrupt__,__auto_psv__)) _T2Interrupt(void)
-{
-    sample &= DACMASK;
-    sample |= DACBITS;
-
-    IFS0bits.T2IF = 0;
-    SPI1BUF = sample;   // Kickstart the SPI transaction. Do not worry about
-                        // LDAC' now. We will get the SPI interrupt once
-                        // the last bit is8out. We will generate a pulse 
-                        // on the LDAC' line then.
-    
-    sample += 41;       // the next "step" value.
 }
 
 void __attribute__((__interrupt__,__auto_psv__)) _SPI1Interrupt(void)
@@ -110,6 +103,52 @@ void setup(void)
     
     _SPI1IF = 0;
     _SPI1IE = 1;
+    
+    PORTBbits.RB4 = 0;
+    delay(10);
+    PORTBbits.RB4 = 1;
+    delay(10);
+    PORTBbits.RB4 = 0;
+    delay(10);
+    PORTBbits.RB4 = 1;
+    delay(10);
+    
+    //lcd_cmd(0xA7); //Invert Display cuz
+    
+    lcd_cmd(0xAE); //Display off
+    lcd_cmd(0xD5); //set display clock div
+    lcd_cmd(0x80); //set clock display as 0x80
+    lcd_cmd(0xA8); //set multiplex
+    lcd_cmd(0x3F); //63 in hex
+    lcd_cmd(0xD3); //display offset
+    lcd_cmd(0x00); //zero offset, plz
+    
+    lcd_cmd(0x40); //set start line
+    lcd_cmd(0x00); //start line to 0
+    lcd_cmd(0x8D); //charge pump
+    lcd_cmd(0x14); //< Gen. display voltage from 3.3V (I believe 0x10 will generate from 5V)
+    
+    lcd_cmd(0x20); //memory mode
+    lcd_cmd(0x00); //page addressing mode
+    lcd_cmd(0xA0 | 0x1); //segremap
+    lcd_cmd(0xC8); //COMSCANDEC
+    
+    lcd_cmd(0xDA); //SETCOMPINS
+    lcd_cmd(0x12); 
+    lcd_cmd(0x81); //SETCONTRAST
+    lcd_cmd(0xCF); //0xCF for 3.3v
+    
+    lcd_cmd(0xD9); //SETPRECHARGE
+    lcd_cmd(0xF1); //for 3.3v
+    
+    lcd_cmd(0xDB); //SETVCOMDETECT
+    lcd_cmd(0x40); //set to 0x40
+    lcd_cmd(0xA4); //DISPLAYON_RESUME
+    lcd_cmd(0xA6); //NORMALDISPLAY
+    lcd_cmd(0x2E); //Deactivate Scroll
+    
+    //lcd_cmd(0xA7); //Invert Display cuz
+    lcd_cmd(0xAF); //display on
 }
 
 void lcd_cmd(unsigned short int packet)
@@ -130,6 +169,86 @@ void lcd_data(unsigned short int packet)
     //delay(100);
 }
 
+void lcd_write_one(void)
+{
+    int x = 40;
+    int y = 10;
+    int i = 0;
+    int pixel = 0;
+    int mask = 0b10000000;
+    
+    for(y = 10; y < 22; y++)
+    {
+        for(x = 40; x < 48; x++)
+        {
+           pixel = one[i] & mask;
+           if(pixel > 0)
+           {
+               pixel = 1;
+           }
+           lcd_write_pixel(x, y, pixel);
+           lcd_update();
+//           mask = mask << 1;
+//           if(mask > 0b10000000)
+//           {
+//               mask = 0b00000001;
+//               i++;
+//           }
+           
+           mask = mask >> 1;
+           if(mask == 0)
+           {
+               mask = 0b10000000;
+               i++;
+           }
+        }
+    }
+}
+
+//Easy to use function to write a pixel to the display using x and y coords!
+void lcd_write_pixel(int x, int y, int colour)
+{
+    int i = 0;
+    int page = floor((float)y / 8);
+    
+    i = (page * 128);
+    i = i + x;
+    
+    int bit_mask = 0b00000001;
+    bit_mask = bit_mask << (y % 8);
+    
+    if(colour == 1)
+    {
+        //Our color we want is white(ON) so OR a one into place
+        frame_buffer[i] = (frame_buffer[i] | bit_mask);
+    }
+    else
+    {
+        //Here we shift over the bit we want to test to see if it is zero or one
+        //since the color we want is black(OFF) we can do nothing if its zero
+        int bit_mask_test = 0b00000001;
+        unsigned char test_num = frame_buffer[i] >> (y%8);
+        bit_mask_test = bit_mask_test << (y%8);
+        test_num = frame_buffer[i] & bit_mask_test;
+        
+        if(test_num != 0)
+        {
+            frame_buffer[i] = (frame_buffer[i] ^ bit_mask);
+        }
+        
+        /*
+        if(test_num % 2 == 1)
+        {
+            //ODD so bit we care about is one, use XOR to make it zero!
+            frame_buffer[i] = (frame_buffer[i] ^ bit_mask);
+        }
+        else
+        {
+            //EVEN so bit we care about is already zero, don't do anything
+        }*/
+    }
+}
+
 //Will clear display with either 0's or 1's (black or white)
 void lcd_clear(int c)
 {
@@ -147,7 +266,17 @@ void lcd_clear(int c)
     
     for(i = 0; i < 1024; i++)
     {
-        lcd_data(pixel);
+        frame_buffer[i] = pixel;
+    }
+}
+
+//Updates display with frame_buffer data
+void lcd_update(void)
+{
+    int i;
+    for(i = 0; i < 1024; i++)
+    {
+        lcd_data(frame_buffer[i]);
     }
 }
 
@@ -155,65 +284,45 @@ int main(int argc, char *argv[])
 {
     setup();
     
-    PORTBbits.RB4 = 0;
-    delay(10);
-    PORTBbits.RB4 = 1;
-    delay(10);
-    PORTBbits.RB4 = 0;
-    delay(10);
-    PORTBbits.RB4 = 1;
-    delay(10);
-    //lcd_cmd(0xA5); //Display On
-    //lcd_cmd(0xA7); //Invert Display cuz
+    //Initialize the frame buffer
+    int i;
+    for(i = 0; i < 1024; i++)
+    {
+        frame_buffer[i] = 0x00;
+    }
     
-    lcd_cmd(0xAE); //Display off
-    lcd_cmd(0xD5); //set display clock div
-    lcd_cmd(0x80); //set clock display as 0x80
-    lcd_cmd(0xA8); //set multiplex
-    lcd_cmd(0x3F); //63 in hex
-    lcd_cmd(0xD3); //display offset
-    lcd_cmd(0x00); //zero offset, plz
+    //frame_buffer[128] = 0xFF; //Writes an 8 pixel tall line to beginning of second page
+    //frame_buffer[0] = 0xFF; //Writes an 8 pixel  tall line to beginning of first page
     
-    lcd_cmd(0x40); //set start line
-    lcd_cmd(0x00); //start line to 0
-    lcd_cmd(0x8D); //charge pump
-    lcd_cmd(0x14); //< Gen. display voltage from 3.3V (I believe 0x10 will generate from 5V)
+//DO TIMING ANALYSIS
+//    int x;
+//    int y;
+//    for(x = 62; x < 66; x++)
+//    {
+//        for(y = 30; y < 34; y++)
+//        {
+//            lcd_write_pixel(x, y, 1);
+//        }
+//    }
+//    lcd_update();
+//DO TIMING ANALYSIS
     
-    lcd_cmd(0x20); //memory mode
-    lcd_cmd(0x00); //0
-    lcd_cmd(0xA0 | 0x1); //segremap
-    lcd_cmd(0xC8); //COMSCANDEC
-    
-    lcd_cmd(0xDA); //SETCOMPINS
-    lcd_cmd(0x12); 
-    lcd_cmd(0x81); //SETCONTRAST
-    lcd_cmd(0xCF); //0xCF for 3.3v
-    
-    lcd_cmd(0xD9); //SETPRECHARGE
-    lcd_cmd(0xF1); //for 3.3v
-    
-    lcd_cmd(0xDB); //SETVCOMDETECT
-    lcd_cmd(0x40); //set to 0x40
-    lcd_cmd(0xA4); //DISPLAYON_RESUME
-    lcd_cmd(0xA6); //NORMALDISPLAY
-    lcd_cmd(0x2E); //Deactivate Scroll
-    
-    //lcd_cmd(0xA7); //Invert Display cuz
-    lcd_cmd(0xAF); //display on
-    
-    //lcd_data(0xFF);
-    
-    lcd_clear(1);
+    lcd_write_one();
     
     while (1)
     {
        //PORTBbits.RB2 = 1;
        LED_SET;
-       lcd_clear(0);
        delay(2000);
-       PORTBbits.RB2 = 0;
-       lcd_clear(1);
+       
+       //lcd_clear(1);
+       lcd_update();
+       
+       LED_RESET;
        delay(2000);
+       
+       //lcd_clear(0);
+       lcd_update();
     }
 
     return 0; // never reached (we hope)

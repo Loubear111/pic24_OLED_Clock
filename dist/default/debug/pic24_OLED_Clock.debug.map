@@ -4,9 +4,14 @@ Tool Name:
   c:\program files (x86)\microchip\xc16\v1.36\bin\bin\..\bin/elf-ld.exe
 
 Command:
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp0000382c.00 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp0000382c.01 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp0000382c.02 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp0000382c.03 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp0000382c.04 \
   -p24FJ64GA002 \
   -o \
-  dist/default/production/pic24_OLED_Clock.production.elf \
+  dist/default/debug/pic24_OLED_Clock.debug.elf \
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/.. \
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib \
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../support/PIC24E/gld \
@@ -16,9 +21,12 @@ Command:
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../support/dsPIC33C/gld \
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../support/dsPIC33E/gld \
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../support/dsPIC33F/gld \
-  build/default/production/OLED_Clock_main.o \
+  build/default/debug/OLED_Clock_main.o \
   --defsym=__MPLAB_BUILD=1 \
-  -Tp24FJ64GA002.gld.00 \
+  --defsym=__MPLAB_DEBUG=1 \
+  --defsym=__DEBUG=1 \
+  --defsym=__MPLAB_DEBUGGER_PK3=1 \
+  -Tp24FJ64GA002.gld.05 \
   --stack=16 \
   --check-sections \
   --data-init \
@@ -30,10 +38,10 @@ Command:
   --stackguard=16 \
   --no-force-link \
   --smart-io \
-  -Map=dist/default/production/pic24_OLED_Clock.production.map \
+  -Map=dist/default/debug/pic24_OLED_Clock.debug.map \
   --report-mem \
   --memorysummary \
-  dist/default/production/memoryfile.xml \
+  dist/default/debug/memoryfile.xml \
   -start-group \
   --library=lega-pic30-elf \
   --library=m-elf \
@@ -51,13 +59,13 @@ c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(crt_start_mode_normal.Leo)
                               (__crt_start_mode_normal)
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(divsf3.eo)
-                              build/default/production/OLED_Clock_main.o (___divsf3)
+                              build/default/debug/OLED_Clock_main.o (___divsf3)
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
-                              build/default/production/OLED_Clock_main.o (_(float, int, long long, short, float, short, int))
+                              build/default/debug/OLED_Clock_main.o (_(float, int, long long, short, float, short, int))
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
-                              build/default/production/OLED_Clock_main.o (___floatsisf)
+                              build/default/debug/OLED_Clock_main.o (___floatsisf)
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floorf.eo)
-                              build/default/production/OLED_Clock_main.o (_floorf)
+                              build/default/debug/OLED_Clock_main.o (_floorf)
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fpack.eo)
                               c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(divsf3.eo) (__fpack)
 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(funpack.eo)
@@ -83,20 +91,25 @@ xc16-ld 1.36 (A)
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x3f0           0x5e8  (1512)
-.const                       0x5f0                 0xc            0x12  (18)
-.text                        0x5fc               0x310           0x498  (1176)
-.dinit                       0x90c                 0x8             0xc  (12)
+.const                       0x5f0                0x88            0xcc  (204)
+.text                        0x678               0x38a           0x54f  (1359)
+.dinit                       0xa02                 0x8             0xc  (12)
 
-                 Total "program" memory used (bytes):          0xa9e  (2718) 4%
+                 Total "program" memory used (bytes):          0xc0f  (3087) 4%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x2000]
 
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
-.bss                         0x800                   0           0x400  (1024)
+reserve_data_0x800           0x800                0x20            0x20  (32)
+reserve_data_0x820           0x820                 0x2             0x2  (2)
+reserve_data_0x822           0x822                 0x2             0x2  (2)
+reserve_data_0x824           0x824                 0x2             0x2  (2)
+reserve_data_0x826           0x826                0x2a            0x2a  (42)
+.bss                         0x850                   0           0x400  (1024)
 
-                 Total "data" memory used (bytes):          0x400  (1024) 12%
+                 Total "data" memory used (bytes):          0x450  (1104) 13%
 
 
 Dynamic Memory Usage
@@ -104,18 +117,18 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0xc00                              0x1c00  (7168)
+stack                        0xc50                              0x1bb0  (7088)
 
-                 Maximum dynamic memory (bytes):         0x1c00  (7168)
+                 Maximum dynamic memory (bytes):         0x1bb0  (7088)
 
 
 External Symbols in Data Memory (by address):
 
-                    0x0800                  _frame_buffer
+                    0x0850                  _frame_buffer
 
 External Symbols in Data Memory (by name):
 
-                    0x0800                  _frame_buffer
+                    0x0850                  _frame_buffer
 
 External Symbols in Program Memory (by address):
 
@@ -141,15 +154,21 @@ External Symbols in Program Memory (by address):
                   0x000572                  ___floatdisf
                   0x000592                  ___floatundisf
                   0x0005f0                  _one
-                  0x0005fc                  _delay
-                  0x000612                  _setup
-                  0x000720                  _lcd_cmd
-                  0x000734                  _lcd_data
-                  0x000744                  _lcd_write_one
-                  0x0007ba                  _lcd_write_pixel
-                  0x000886                  _lcd_clear
-                  0x0008b8                  _lcd_update
-                  0x0008d8                  _main
+                  0x00060e                  _sone
+                  0x00062c                  _uno
+                  0x00064a                  _block
+                  0x000652                  _blockO
+                  0x00065a                  _kewl
+                  0x000678                  _delay
+                  0x00068e                  _setup
+                  0x00079c                  _lcd_cmd
+                  0x0007b0                  _lcd_data
+                  0x0007c0                  _lcd_write_one
+                  0x00083a                  _lcd_write_block
+                  0x0008ae                  _lcd_write_pixel
+                  0x00097a                  _lcd_clear
+                  0x0009ac                  _lcd_update
+                  0x0009cc                  _main
 
 External Symbols in Program Memory (by name):
 
@@ -173,17 +192,23 @@ External Symbols in Program Memory (by name):
                   0x000438                  __funpack2
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x0005fc                  _delay
+                  0x00064a                  _block
+                  0x000652                  _blockO
+                  0x000678                  _delay
                   0x0003b2                  _floorf
-                  0x000886                  _lcd_clear
-                  0x000720                  _lcd_cmd
-                  0x000734                  _lcd_data
-                  0x0008b8                  _lcd_update
-                  0x000744                  _lcd_write_one
-                  0x0007ba                  _lcd_write_pixel
-                  0x0008d8                  _main
+                  0x00065a                  _kewl
+                  0x00097a                  _lcd_clear
+                  0x00079c                  _lcd_cmd
+                  0x0007b0                  _lcd_data
+                  0x0009ac                  _lcd_update
+                  0x00083a                  _lcd_write_block
+                  0x0007c0                  _lcd_write_one
+                  0x0008ae                  _lcd_write_pixel
+                  0x0009cc                  _main
                   0x0005f0                  _one
-                  0x000612                  _setup
+                  0x00068e                  _setup
+                  0x00060e                  _sone
+                  0x00062c                  _uno
 
 Memory Configuration
 
@@ -200,8 +225,36 @@ CONFIG1          0x00abfe           0x000002
 
 Linker script and memory map
 
-LOAD build/default/production/OLED_Clock_main.o
+
+reserve_data_0x800
+                    0x0800         0x20
+                    0x0820                  . = 0x20
+ *fill*             0x0800         0x2000
+
+reserve_data_0x820
+                    0x0820          0x2
+                    0x0822                  . = 0x2
+ *fill*             0x0820          0x200
+
+reserve_data_0x822
+                    0x0822          0x2
+                    0x0824                  . = 0x2
+ *fill*             0x0822          0x200
+
+reserve_data_0x824
+                    0x0824          0x2
+                    0x0826                  . = 0x2
+ *fill*             0x0824          0x200
+
+reserve_data_0x826
+                    0x0826         0x2a
+                    0x0850                  . = 0x2a
+ *fill*             0x0826         0x2a00
+LOAD build/default/debug/OLED_Clock_main.o
                     0x0001                  __MPLAB_BUILD = 0x1
+                    0x0001                  __MPLAB_DEBUG = 0x1
+                    0x0001                  __DEBUG = 0x1
+                    0x0001                  __MPLAB_DEBUGGER_PK3 = 0x1
 LOAD pPIC24Fxxx
 LOAD c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libfx-elf.a
                     0xabfc                  __CONFIG2 = 0xabfc
@@ -232,7 +285,7 @@ LOAD c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr.text        0x0002c8         0x18 build/default/production/OLED_Clock_main.o
+ .isr.text        0x0002c8         0x18 build/default/debug/OLED_Clock_main.o
                   0x0002c8                  __SPI1Interrupt
  .isr             0x0002e0          0x4 default_isr
                   0x0002e0                  __DefaultInterrupt
@@ -293,26 +346,26 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x1297
+.debug_info       0x000000       0x13c5
  *(.debug_info)
- .debug_info      0x000000       0x1297 build/default/production/OLED_Clock_main.o
+ .debug_info      0x000000       0x13c5 build/default/debug/OLED_Clock_main.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x1e4
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x1e4 build/default/production/OLED_Clock_main.o
+ .debug_abbrev    0x000000        0x1e4 build/default/debug/OLED_Clock_main.o
 
-.debug_line       0x000000        0x1a2
+.debug_line       0x000000        0x1c0
  *(.debug_line)
- .debug_line      0x000000        0x1a2 build/default/production/OLED_Clock_main.o
+ .debug_line      0x000000        0x1c0 build/default/debug/OLED_Clock_main.o
 
-.debug_frame      0x000000        0x13a
+.debug_frame      0x000000        0x156
  *(.debug_frame)
- .debug_frame     0x000000        0x13a build/default/production/OLED_Clock_main.o
+ .debug_frame     0x000000        0x156 build/default/debug/OLED_Clock_main.o
 
 .debug_str        0x000000         0x89
  *(.debug_str)
- .debug_str       0x000000         0x89 build/default/production/OLED_Clock_main.o
+ .debug_str       0x000000         0x89 build/default/debug/OLED_Clock_main.o
 
 .debug_loc
  *(.debug_loc)
@@ -321,10 +374,10 @@ __CONFIG1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0xb7
+                  0x000000         0xfa
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0xb7 build/default/production/OLED_Clock_main.o
+                  0x000000         0xfa build/default/debug/OLED_Clock_main.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -332,7 +385,7 @@ __CONFIG1
 .debug_aranges    0x000000         0x18
  *(.debug_aranges)
  .debug_aranges
-                  0x000000         0x18 build/default/production/OLED_Clock_main.o
+                  0x000000         0x18 build/default/debug/OLED_Clock_main.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -914,19 +967,19 @@ LOAD c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30
 LOAD c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
-OUTPUT(dist/default/production/pic24_OLED_Clock.production.elf elf32-pic30)
+OUTPUT(dist/default/debug/pic24_OLED_Clock.debug.elf elf32-pic30)
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
                   0x000018        0x144
  .debug_pubtypes
-                  0x000018        0x144 build/default/production/OLED_Clock_main.o
+                  0x000018        0x144 build/default/debug/OLED_Clock_main.o
 
 __c30_signature
                   0x00015c         0x5a
  __c30_signature
-                  0x00015c          0x6 build/default/production/OLED_Clock_main.o
+                  0x00015c          0x6 build/default/debug/OLED_Clock_main.o
  __c30_signature
                   0x000162          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
  __c30_signature
@@ -956,37 +1009,43 @@ __c30_signature
  __c30_signature
                   0x0001b0          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
 
-.bss                0x0800        0x400
- .bss               0x0800        0x400 build/default/production/OLED_Clock_main.o
-                    0x0800                  _frame_buffer
+.bss                0x0850        0x400
+ .bss               0x0850        0x400 build/default/debug/OLED_Clock_main.o
+                    0x0850                  _frame_buffer
 
 .config_JTAGEN    0x00abfe          0x2
  .config_JTAGEN
-                  0x00abfe          0x2 build/default/production/OLED_Clock_main.o
+                  0x00abfe          0x2 build/default/debug/OLED_Clock_main.o
 
 .config_IESO      0x00abfc          0x2
- .config_IESO     0x00abfc          0x2 build/default/production/OLED_Clock_main.o
+ .config_IESO     0x00abfc          0x2 build/default/debug/OLED_Clock_main.o
 
 .ivt._SPI1Interrupt
                   0x000028          0x2
  .ivt._SPI1Interrupt
-                  0x000028          0x2 build/default/production/OLED_Clock_main.o
+                  0x000028          0x2 build/default/debug/OLED_Clock_main.o
 
-.const              0x85f0          0xc load address 0x0005f0  
- .const             0x85f0          0xc build/default/production/OLED_Clock_main.o
+.const              0x85f0         0x88 load address 0x0005f0  
+ .const             0x85f0         0x88 build/default/debug/OLED_Clock_main.o
                     0x85f0                  _one
+                    0x860e                  _sone
+                    0x862c                  _uno
+                    0x864a                  _block
+                    0x8652                  _blockO
+                    0x865a                  _kewl
 
-.text             0x0005fc        0x310
- .text            0x0005fc        0x310 build/default/production/OLED_Clock_main.o
-                  0x0005fc                  _delay
-                  0x000612                  _setup
-                  0x000720                  _lcd_cmd
-                  0x000734                  _lcd_data
-                  0x000744                  _lcd_write_one
-                  0x0007ba                  _lcd_write_pixel
-                  0x000886                  _lcd_clear
-                  0x0008b8                  _lcd_update
-                  0x0008d8                  _main
+.text             0x000678        0x38a
+ .text            0x000678        0x38a build/default/debug/OLED_Clock_main.o
+                  0x000678                  _delay
+                  0x00068e                  _setup
+                  0x00079c                  _lcd_cmd
+                  0x0007b0                  _lcd_data
+                  0x0007c0                  _lcd_write_one
+                  0x00083a                  _lcd_write_block
+                  0x0008ae                  _lcd_write_pixel
+                  0x00097a                  _lcd_clear
+                  0x0009ac                  _lcd_update
+                  0x0009cc                  _main
 
-.dinit            0x00090c          0x8
- .dinit           0x00090c          0x8 data_init
+.dinit            0x000a02          0x8
+ .dinit           0x000a02          0x8 data_init
