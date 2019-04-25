@@ -1,2 +1,3 @@
 build/default/debug/OLED_Clock_main.o:  \
-OLED_Clock_main.c 
+OLED_Clock_main.c  \
+lcd.h 

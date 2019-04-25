@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=OLED_Clock_main.c
+SOURCEFILES_QUOTED_IF_SPACED=OLED_Clock_main.c lcd.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/OLED_Clock_main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/OLED_Clock_main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/OLED_Clock_main.o ${OBJECTDIR}/lcd.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/OLED_Clock_main.o.d ${OBJECTDIR}/lcd.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/OLED_Clock_main.o
+OBJECTFILES=${OBJECTDIR}/OLED_Clock_main.o ${OBJECTDIR}/lcd.o
 
 # Source Files
-SOURCEFILES=OLED_Clock_main.c
+SOURCEFILES=OLED_Clock_main.c lcd.c
 
 
 CFLAGS=
@@ -101,6 +101,13 @@ ${OBJECTDIR}/OLED_Clock_main.o: OLED_Clock_main.c  nbproject/Makefile-${CND_CONF
 	${MP_CC} $(MP_EXTRA_CC_PRE)  OLED_Clock_main.c  -o ${OBJECTDIR}/OLED_Clock_main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/OLED_Clock_main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/OLED_Clock_main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/lcd.o: lcd.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lcd.o.d 
+	@${RM} ${OBJECTDIR}/lcd.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  lcd.c  -o ${OBJECTDIR}/lcd.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lcd.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/lcd.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/OLED_Clock_main.o: OLED_Clock_main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -108,6 +115,13 @@ ${OBJECTDIR}/OLED_Clock_main.o: OLED_Clock_main.c  nbproject/Makefile-${CND_CONF
 	@${RM} ${OBJECTDIR}/OLED_Clock_main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  OLED_Clock_main.c  -o ${OBJECTDIR}/OLED_Clock_main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/OLED_Clock_main.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/OLED_Clock_main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/lcd.o: lcd.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lcd.o.d 
+	@${RM} ${OBJECTDIR}/lcd.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  lcd.c  -o ${OBJECTDIR}/lcd.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lcd.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/lcd.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
