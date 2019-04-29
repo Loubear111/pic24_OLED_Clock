@@ -4,11 +4,11 @@ Tool Name:
   c:\program files (x86)\microchip\xc16\v1.36\bin\bin\..\bin/elf-ld.exe
 
 Command:
-  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002510.00 \
-  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002510.01 \
-  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002510.02 \
-  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002510.03 \
-  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002510.04 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002dfc.00 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002dfc.01 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002dfc.02 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002dfc.03 \
+  -TC:\\Users\\louis\\AppData\\Local\\Temp\\tmp00002dfc.04 \
   -p24FJ64GA002 \
   -o \
   dist/default/debug/pic24_OLED_Clock.debug.elf \
@@ -23,6 +23,8 @@ Command:
   -Lc:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../support/dsPIC33F/gld \
   build/default/debug/OLED_Clock_main.o \
   build/default/debug/lcd.o \
+  build/default/debug/util.o \
+  build/default/debug/watch_State.o \
   --defsym=__MPLAB_BUILD=1 \
   --defsym=__MPLAB_DEBUG=1 \
   --defsym=__DEBUG=1 \
@@ -94,11 +96,11 @@ xc16-ld 1.36 (A)
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x3fc           0x5fa  (1530)
-.const                       0x5fc                0x1e            0x2d  (45)
-.text                        0x61a               0x472           0x6ab  (1707)
-.dinit                       0xa8c                 0x8             0xc  (12)
+.const                       0x5fc                0xb4           0x10e  (270)
+.text                        0x6b0               0x616           0x921  (2337)
+.dinit                       0xcc6                 0xe            0x15  (21)
 
-                 Total "program" memory used (bytes):          0xcde  (3294) 5%
+                 Total "program" memory used (bytes):         0x103e  (4158) 6%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x2000]
@@ -110,9 +112,10 @@ reserve_data_0x820           0x820                 0x2             0x2  (2)
 reserve_data_0x822           0x822                 0x2             0x2  (2)
 reserve_data_0x824           0x824                 0x2             0x2  (2)
 reserve_data_0x826           0x826                0x2a            0x2a  (42)
-.bss                         0x850                   0           0x400  (1024)
+.nbss                        0x850                   0             0x4  (4)
+.bss                         0x854                   0           0x400  (1024)
 
-                 Total "data" memory used (bytes):          0x450  (1104) 13%
+                 Total "data" memory used (bytes):          0x454  (1108) 13%
 
 
 Dynamic Memory Usage
@@ -120,18 +123,22 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0xc50                              0x1bb0  (7088)
+stack                        0xc54                              0x1bac  (7084)
 
-                 Maximum dynamic memory (bytes):         0x1bb0  (7088)
+                 Maximum dynamic memory (bytes):         0x1bac  (7084)
 
 
 External Symbols in Data Memory (by address):
 
-                    0x0850                  _frame_buffer
+                    0x0850                  _state
+                    0x0852                  _edit
+                    0x0854                  _frame_buffer
 
 External Symbols in Data Memory (by name):
 
-                    0x0850                  _frame_buffer
+                    0x0852                  _edit
+                    0x0854                  _frame_buffer
+                    0x0850                  _state
 
 External Symbols in Program Memory (by address):
 
@@ -157,21 +164,38 @@ External Symbols in Program Memory (by address):
                   0x000572                  ___floatdisf
                   0x000592                  ___floatundisf
                   0x0005f0                  _strlen
-                  0x0005fc                  _one
-                  0x000608                  _two
-                  0x00061a                  _delay
-                  0x000630                  _lcd_setup
-                  0x000744                  _lcd_write_pixel
-                  0x000810                  _lcd_clear
-                  0x000842                  _lcd_update
-                  0x000862                  _lcd_cmd
-                  0x000876                  _lcd_data
-                  0x000886                  _lcd_write_char
-                  0x00091a                  _lcd_write_string
-                  0x000972                  _lcd_write_one
-                  0x0009e8                  _lcd_write_two
-                  0x000a5e                  _setup
-                  0x000a76                  _main
+                  0x0005fc                  _zero
+                  0x000608                  _one
+                  0x000614                  _two
+                  0x000620                  _three
+                  0x00062c                  _four
+                  0x000638                  _five
+                  0x000644                  _six
+                  0x000650                  _seven
+                  0x00065c                  _eight
+                  0x000668                  _nine
+                  0x000674                  _space
+                  0x000680                  _colon
+                  0x00068c                  _unknown
+                  0x0006b0                  _lcd_setup
+                  0x0007c4                  _lcd_write_pixel
+                  0x000890                  _lcd_clear
+                  0x0008c2                  _lcd_update
+                  0x0008e2                  _lcd_cmd
+                  0x0008f6                  _lcd_data
+                  0x000906                  _lcd_write_char
+                  0x000a2e                  _lcd_write_string
+                  0x000a8a                  _checkButton
+                  0x000b24                  _watch_getState
+                  0x000b2c                  _watch_getEditState
+                  0x000b34                  _watch_updateState
+                  0x000b8c                  _watch_update
+                  0x000bf0                  _init_interactivebuttons
+                  0x000c06                  _setup
+                  0x000c30                  _getTime
+                  0x000c64                  _setTime
+                  0x000c90                  _main
+                  0x000cb0                  _delay
 
 External Symbols in Program Memory (by name):
 
@@ -195,23 +219,40 @@ External Symbols in Program Memory (by name):
                   0x000438                  __funpack2
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x00061a                  _delay
+                  0x000a8a                  _checkButton
+                  0x000680                  _colon
+                  0x000cb0                  _delay
+                  0x00065c                  _eight
+                  0x000638                  _five
                   0x0003b2                  _floorf
-                  0x000810                  _lcd_clear
-                  0x000862                  _lcd_cmd
-                  0x000876                  _lcd_data
-                  0x000630                  _lcd_setup
-                  0x000842                  _lcd_update
-                  0x000886                  _lcd_write_char
-                  0x000972                  _lcd_write_one
-                  0x000744                  _lcd_write_pixel
-                  0x00091a                  _lcd_write_string
-                  0x0009e8                  _lcd_write_two
-                  0x000a76                  _main
-                  0x0005fc                  _one
-                  0x000a5e                  _setup
+                  0x00062c                  _four
+                  0x000c30                  _getTime
+                  0x000bf0                  _init_interactivebuttons
+                  0x000890                  _lcd_clear
+                  0x0008e2                  _lcd_cmd
+                  0x0008f6                  _lcd_data
+                  0x0006b0                  _lcd_setup
+                  0x0008c2                  _lcd_update
+                  0x000906                  _lcd_write_char
+                  0x0007c4                  _lcd_write_pixel
+                  0x000a2e                  _lcd_write_string
+                  0x000c90                  _main
+                  0x000668                  _nine
+                  0x000608                  _one
+                  0x000c64                  _setTime
+                  0x000c06                  _setup
+                  0x000650                  _seven
+                  0x000644                  _six
+                  0x000674                  _space
                   0x0005f0                  _strlen
-                  0x000608                  _two
+                  0x000620                  _three
+                  0x000614                  _two
+                  0x00068c                  _unknown
+                  0x000b2c                  _watch_getEditState
+                  0x000b24                  _watch_getState
+                  0x000b8c                  _watch_update
+                  0x000b34                  _watch_updateState
+                  0x0005fc                  _zero
 
 Memory Configuration
 
@@ -255,6 +296,8 @@ reserve_data_0x826
  *fill*             0x0826         0x2a00
 LOAD build/default/debug/OLED_Clock_main.o
 LOAD build/default/debug/lcd.o
+LOAD build/default/debug/util.o
+LOAD build/default/debug/watch_State.o
                     0x0001                  __MPLAB_BUILD = 0x1
                     0x0001                  __MPLAB_DEBUG = 0x1
                     0x0001                  __DEBUG = 0x1
@@ -352,31 +395,40 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x1720
+.debug_info       0x000000       0x230a
  *(.debug_info)
- .debug_info      0x000000        0x69d build/default/debug/OLED_Clock_main.o
- .debug_info      0x00069d       0x1083 build/default/debug/lcd.o
+ .debug_info      0x000000        0xaed build/default/debug/OLED_Clock_main.o
+ .debug_info      0x000aed       0x1185 build/default/debug/lcd.o
+ .debug_info      0x001c72        0x14b build/default/debug/util.o
+ .debug_info      0x001dbd        0x54d build/default/debug/watch_State.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x316
+.debug_abbrev     0x000000        0x488
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x151 build/default/debug/OLED_Clock_main.o
- .debug_abbrev    0x000151        0x1c5 build/default/debug/lcd.o
+ .debug_abbrev    0x000000        0x15e build/default/debug/OLED_Clock_main.o
+ .debug_abbrev    0x00015e        0x1b6 build/default/debug/lcd.o
+ .debug_abbrev    0x000314         0x43 build/default/debug/util.o
+ .debug_abbrev    0x000357        0x131 build/default/debug/watch_State.o
 
-.debug_line       0x000000        0x2c2
+.debug_line       0x000000        0x42c
  *(.debug_line)
- .debug_line      0x000000        0x10e build/default/debug/OLED_Clock_main.o
- .debug_line      0x00010e        0x1b4 build/default/debug/lcd.o
+ .debug_line      0x000000        0x138 build/default/debug/OLED_Clock_main.o
+ .debug_line      0x000138        0x193 build/default/debug/lcd.o
+ .debug_line      0x0002cb         0x37 build/default/debug/util.o
+ .debug_line      0x000302        0x12a build/default/debug/watch_State.o
 
-.debug_frame      0x000000        0x1be
+.debug_frame      0x000000        0x28e
  *(.debug_frame)
- .debug_frame     0x000000         0x76 build/default/debug/OLED_Clock_main.o
- .debug_frame     0x000076        0x148 build/default/debug/lcd.o
+ .debug_frame     0x000000         0xae build/default/debug/OLED_Clock_main.o
+ .debug_frame     0x0000ae         0xf4 build/default/debug/lcd.o
+ .debug_frame     0x0001a2         0x30 build/default/debug/util.o
+ .debug_frame     0x0001d2         0xbc build/default/debug/watch_State.o
 
-.debug_str        0x000000         0x98
+.debug_str        0x000000         0xbc
  *(.debug_str)
- .debug_str       0x000000         0x1e build/default/debug/OLED_Clock_main.o
- .debug_str       0x00001e         0x7a build/default/debug/lcd.o
+ .debug_str       0x000000         0x34 build/default/debug/OLED_Clock_main.o
+ .debug_str       0x000034         0x74 build/default/debug/lcd.o
+ .debug_str       0x0000a8         0x14 build/default/debug/watch_State.o
 
 .debug_loc
  *(.debug_loc)
@@ -385,22 +437,30 @@ __CONFIG1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x119
+                  0x000000        0x22b
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x38 build/default/debug/OLED_Clock_main.o
+                  0x000000         0x50 build/default/debug/OLED_Clock_main.o
  .debug_pubnames
-                  0x000038         0xe1 build/default/debug/lcd.o
+                  0x000050        0x11d build/default/debug/lcd.o
+ .debug_pubnames
+                  0x00016d         0x1c build/default/debug/util.o
+ .debug_pubnames
+                  0x000189         0xa2 build/default/debug/watch_State.o
 
 .debug_ranges
  *(.debug_ranges)
 
-.debug_aranges    0x000000         0x30
+.debug_aranges    0x000000         0x60
  *(.debug_aranges)
  .debug_aranges
                   0x000000         0x18 build/default/debug/OLED_Clock_main.o
  .debug_aranges
                   0x000018         0x18 build/default/debug/lcd.o
+ .debug_aranges
+                  0x000030         0x18 build/default/debug/util.o
+ .debug_aranges
+                  0x000048         0x18 build/default/debug/watch_State.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -987,52 +1047,65 @@ LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000030        0x180
+                  0x000060        0x231
  .debug_pubtypes
-                  0x000030         0x7c build/default/debug/OLED_Clock_main.o
+                  0x000060         0xbe build/default/debug/OLED_Clock_main.o
  .debug_pubtypes
-                  0x0000ac        0x104 build/default/debug/lcd.o
+                  0x00011e        0x104 build/default/debug/lcd.o
+ .debug_pubtypes
+                  0x000222         0x12 build/default/debug/util.o
+ .debug_pubtypes
+                  0x000234         0x5d build/default/debug/watch_State.o
 
 __c30_signature
-                  0x0001b0         0x66
+                  0x000291         0x72
  __c30_signature
-                  0x0001b0          0x6 build/default/debug/OLED_Clock_main.o
+                  0x000291          0x6 build/default/debug/OLED_Clock_main.o
  __c30_signature
-                  0x0001b6          0x6 build/default/debug/lcd.o
+                  0x000297          0x6 build/default/debug/lcd.o
  __c30_signature
-                  0x0001bc          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
+                  0x00029d          0x6 build/default/debug/util.o
  __c30_signature
-                  0x0001c2          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
+                  0x0002a3          0x6 build/default/debug/watch_State.o
  __c30_signature
-                  0x0001c8          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(divsf3.eo)
+                  0x0002a9          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x0001ce          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
+                  0x0002af          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
  __c30_signature
-                  0x0001d4          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
+                  0x0002b5          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(divsf3.eo)
  __c30_signature
-                  0x0001da          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floorf.eo)
+                  0x0002bb          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
  __c30_signature
-                  0x0001e0          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fpack.eo)
+                  0x0002c1          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
  __c30_signature
-                  0x0001e6          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(funpack.eo)
+                  0x0002c7          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floorf.eo)
  __c30_signature
-                  0x0001ec          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(funpack2.eo)
+                  0x0002cd          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fpack.eo)
  __c30_signature
-                  0x0001f2          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(futil.eo)
+                  0x0002d3          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(funpack.eo)
  __c30_signature
-                  0x0001f8          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(addsf3.eo)
+                  0x0002d9          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(funpack2.eo)
  __c30_signature
-                  0x0001fe          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fchop.eo)
+                  0x0002df          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(futil.eo)
  __c30_signature
-                  0x000204          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
+                  0x0002e5          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(addsf3.eo)
  __c30_signature
-                  0x00020a          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
+                  0x0002eb          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(fchop.eo)
  __c30_signature
-                  0x000210          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-c-elf.a(strlen.XX_eo)
+                  0x0002f1          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
+ __c30_signature
+                  0x0002f7          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
+ __c30_signature
+                  0x0002fd          0x6 c:/program files (x86)/microchip/xc16/v1.36/bin/bin/../../lib\liblega-c-elf.a(strlen.XX_eo)
 
-.bss                0x0850        0x400
- .bss               0x0850        0x400 build/default/debug/lcd.o
-                    0x0850                  _frame_buffer
+.nbss               0x0850          0x4
+ .nbss              0x0850          0x4 build/default/debug/watch_State.o
+                    0x0850                  _state
+                    0x0852                  _edit
+
+.bss                0x0854        0x400
+ .bss               0x0854        0x400 build/default/debug/lcd.o
+                    0x0854                  _frame_buffer
 
 .config_JTAGEN    0x00abfe          0x2
  .config_JTAGEN
@@ -1046,28 +1119,47 @@ __c30_signature
  .ivt._SPI1Interrupt
                   0x000028          0x2 build/default/debug/OLED_Clock_main.o
 
-.const              0x85fc         0x1e load address 0x0005fc  
- .const             0x85fc         0x18 build/default/debug/lcd.o
-                    0x85fc                  _one
-                    0x8608                  _two
- .const             0x8614          0x6 build/default/debug/OLED_Clock_main.o
+.const              0x85fc         0xb4 load address 0x0005fc  
+ .const             0x85fc         0x9c build/default/debug/lcd.o
+                    0x85fc                  _zero
+                    0x8608                  _one
+                    0x8614                  _two
+                    0x8620                  _three
+                    0x862c                  _four
+                    0x8638                  _five
+                    0x8644                  _six
+                    0x8650                  _seven
+                    0x865c                  _eight
+                    0x8668                  _nine
+                    0x8674                  _space
+                    0x8680                  _colon
+                    0x868c                  _unknown
+ .const             0x8698         0x18 build/default/debug/watch_State.o
 
-.text             0x00061a        0x472
- .text            0x00061a        0x444 build/default/debug/lcd.o
-                  0x00061a                  _delay
-                  0x000630                  _lcd_setup
-                  0x000744                  _lcd_write_pixel
-                  0x000810                  _lcd_clear
-                  0x000842                  _lcd_update
-                  0x000862                  _lcd_cmd
-                  0x000876                  _lcd_data
-                  0x000886                  _lcd_write_char
-                  0x00091a                  _lcd_write_string
-                  0x000972                  _lcd_write_one
-                  0x0009e8                  _lcd_write_two
- .text            0x000a5e         0x2e build/default/debug/OLED_Clock_main.o
-                  0x000a5e                  _setup
-                  0x000a76                  _main
+.text             0x0006b0        0x616
+ .text            0x0006b0        0x3da build/default/debug/lcd.o
+                  0x0006b0                  _lcd_setup
+                  0x0007c4                  _lcd_write_pixel
+                  0x000890                  _lcd_clear
+                  0x0008c2                  _lcd_update
+                  0x0008e2                  _lcd_cmd
+                  0x0008f6                  _lcd_data
+                  0x000906                  _lcd_write_char
+                  0x000a2e                  _lcd_write_string
+ .text            0x000a8a        0x17c build/default/debug/watch_State.o
+                  0x000a8a                  _checkButton
+                  0x000b24                  _watch_getState
+                  0x000b2c                  _watch_getEditState
+                  0x000b34                  _watch_updateState
+                  0x000b8c                  _watch_update
+                  0x000bf0                  _init_interactivebuttons
+ .text            0x000c06         0xaa build/default/debug/OLED_Clock_main.o
+                  0x000c06                  _setup
+                  0x000c30                  _getTime
+                  0x000c64                  _setTime
+                  0x000c90                  _main
+ .text            0x000cb0         0x16 build/default/debug/util.o
+                  0x000cb0                  _delay
 
-.dinit            0x000a8c          0x8
- .dinit           0x000a8c          0x8 data_init
+.dinit            0x000cc6          0xe
+ .dinit           0x000cc6          0xe data_init

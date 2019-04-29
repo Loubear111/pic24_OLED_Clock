@@ -5,7 +5,9 @@
         <group>
             <file>file:/C:/Users/louis/MPLABXProjects/final_project_v001.X/pic24_OLED_Clock/lcd.h</file>
             <file>file:/C:/Users/louis/MPLABXProjects/final_project_v001.X/pic24_OLED_Clock/OLED_Clock_main.c</file>
+            <file>file:/C:/Users/louis/MPLABXProjects/final_project_v001.X/pic24_OLED_Clock/watch_State.c</file>
             <file>file:/C:/Users/louis/MPLABXProjects/final_project_v001.X/pic24_OLED_Clock/lcd.c</file>
+            <file>file:/C:/Users/louis/MPLABXProjects/final_project_v001.X/pic24_OLED_Clock/watch_State.h</file>
         </group>
     </open-files>
 </project-private>

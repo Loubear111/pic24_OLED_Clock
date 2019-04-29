@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "lcd.h"
+#include "util.h"
+#include "watch_State.h"
 
 // PIC24FJ64GA002 Configuration Bit Settings
 // CW1: FLASH CONFIGURATION WORD 1 (see PIC24 Family Reference Manual 24.1)
@@ -23,9 +25,6 @@
                                        // Fail-Safe Clock Monitor is enabled)
 #pragma config FNOSC = FRCPLL      // Oscillator Select (Fast RC Oscillator with PLL module (FRCPLL))
 
-#define LED_SET         PORTBbits.RB2 = 1;
-#define LED_RESET       PORTBbits.RB2 = 0;
-
 void __attribute__((__interrupt__,__auto_psv__)) _SPI1Interrupt(void)
 {
     int temp;
@@ -45,6 +44,85 @@ void setup(void)
     //PORTB = 0xffff;
     PORTB = 0x0;
     TRISBbits.TRISB2 = 0; // Heartbeat LED
+    
+    //Setup Timer1 to delay (T1 USED IN watch_State)
+    T2CON = 0;
+    PR2 = 15999;
+    TMR2 = 0;
+    IFS0bits.T2IF = 0;
+    T2CONbits.TON = 1;
+    
+//    NVMKEY = 0x55;
+//    NVMKEY = 0xAA;
+    RCFGCALbits.RTCWREN = 1; //start with registers unlocked
+    RCFGCALbits.RTCOE = 1; 
+//    __builtin_write_OSCCONL(OSCCON | 0x02); //enable secondary clock source
+    RCFGCALbits.RTCWREN = 0; //lock registers back up
+}
+
+void getTime(void)
+{
+    // Wait for RTCSYNC bit to become ‘0’
+    while(RCFGCALbits.RTCSYNC==1);
+    
+    unsigned int monthdate;
+    unsigned int dayhour;
+    unsigned int min_sec;
+    unsigned int year;
+    unsigned char month;
+    unsigned char day;
+    unsigned char weekday;
+    unsigned char hour;
+    unsigned char minute;
+    unsigned char second;
+    
+    // Read RTCC timekeeping register (set for hours)
+    RCFGCALbits.RTCPTR=0b11;
+    year = RTCVAL;
+    monthdate = RTCVAL;
+    dayhour = RTCVAL;
+    min_sec = RTCVAL;
+    
+    char buffer[2];
+    second = ((min_sec >> 4) * 10) + (min_sec & 0b0001111);
+    sprintf(buffer, "%d", second);
+    lcd_write_string(buffer, 20, 20);
+    
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+}
+
+void setTime(unsigned char hour, unsigned char min, unsigned char sec)
+{
+    //NVMKEY = 0x55;
+    //NVMKEY = 0xAA;
+    RCFGCALbits.RTCWREN = 1;
+    
+    RCFGCALbits.RTCEN = 0; //disable
+    RCFGCALbits.RTCPTR = 3; //set rtc pointer to three so we can set all the values
+    
+    unsigned char hourBCD;
+    hourBCD = (char)floor(hour / 10) << 4; //setting the "tens" digit for hour in BCD
+    hourBCD = hourBCD + (hour % 10); //setting the "ones" digit for hour in BCD
+            
+    unsigned char minBCD;
+    minBCD = (char)floor(min / 10) << 4; //setting the "tens" digit for minute in BCD
+    minBCD = minBCD + (min % 10); //setting the "ones" digit for minute in BCD
+    
+    unsigned char secBCD;
+    secBCD = (char)floor(sec / 10) << 4; //setting the "tens" digit for second in BCD
+    secBCD = secBCD + (sec % 10); //setting the "ones" digit for second in BCD
+    
+    RTCVAL = 0b10011100; //Year set, 9.8 aka 98
+    RTCVAL = (0b10000 << 8) + 0b100011; //month 10, day 23
+    RTCVAL = (0b001 << 8) + hourBCD; //day 1, hour 13
+    RTCVAL = (minBCD << 8) + secBCD; //minute 31, seconds 11
+            
+    RCFGCALbits.RTCEN = 1; //enable
+    RCFGCALbits.RTCWREN = 0;
 }
 
 int main(int argc, char *argv[])
@@ -52,12 +130,20 @@ int main(int argc, char *argv[])
     setup();
     
     lcd_setup();
-    //lcd_write_char('1', 0, 0);
-    lcd_write_string("1234567890f", 0, 0);
+    init_interactivebuttons();
     
+    //lcd_write_char('1', 0, 0);
+    //lcd_write_string("0 1 2 3 4 5 6 7 8 9", 0, 0);
+    
+    lcd_clear(0);
+    setTime(4, 4, 6);
+    getTime();
     while (1)
     {
         lcd_update();
+        watch_updateState();
+        watch_update();
+        getTime();
     }
 
     return 0; // never reached (we hope)

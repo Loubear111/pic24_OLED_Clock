@@ -1,8 +1,9 @@
 #include <xc.h>
-#include "lcd.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include "lcd.h"
+#include "util.h"
 
 const unsigned char zero [] = {
 0x3C, 0x66, 0x42, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0x42, 0x66, 0x3C, 
@@ -44,6 +45,14 @@ const unsigned char nine [] = {
 0x3C, 0x66, 0xC3, 0xC3, 0xC3, 0xC3, 0x63, 0x3E, 0x06, 0x0C, 0x18, 0xE0, 
 };
 
+const unsigned char space [] = {
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+};
+
+const unsigned char colon [] = {
+0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 
+};
+
 const unsigned char unknown [] = {
 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
 };
@@ -51,20 +60,12 @@ const unsigned char unknown [] = {
 unsigned char frame_buffer [1024];
 
 /* PRIVATE FUNCTION PROTOTYPES */
+
 void lcd_data(unsigned short int packet);
 void lcd_cmd(unsigned short int packet);
+void lcd_writeChar(char c, int x, int y);
 
 /* PUBLIC FUNCTIONS */
-//Generic delay function
-void delay(unsigned int ms)
-{
-    while(ms > 0)
-    {
-        asm("repeat #15993");
-        asm("nop");
-        ms--;
-    }
-}
 
 void lcd_setup(void)
 {
@@ -232,6 +233,7 @@ void lcd_update(void)
 /* PRIVATE FUNCTIONS */
 void lcd_cmd(unsigned short int packet)
 {
+    //CS to 0 DC to 0 for command packet
     LCD_CS_RESET;
     LCD_DC_RESET;
     
@@ -241,6 +243,7 @@ void lcd_cmd(unsigned short int packet)
 
 void lcd_data(unsigned short int packet)
 {
+    //CS to 0 DC to 1 for data ram packet
     LCD_CS_RESET;
     LCD_DC_SET;
     
@@ -255,8 +258,10 @@ void lcd_write_char(char c, int xi, int yi)
     int y;
     int pixel = 0;
     int mask = 0b10000000;
-    unsigned char *carr;
+    unsigned const char *carr;
     
+    //here we assign the carr array which will be used to print out the given
+    //character in the for loop below.
     if(c == '1')
     {
         carr = one;
@@ -297,16 +302,28 @@ void lcd_write_char(char c, int xi, int yi)
     {
         carr = zero;
     }
+    else if(c == ' ')
+    {
+        carr = space;
+    }
+    else if(c == ':')
+    {
+        carr = colon;
+    }
     else
     {
         carr = unknown;
     }
     
+    //This loop breaks up the character into its respective pixels (bits) and
+    //prints them out
     for(y = yi; y < (yi + LCD_FONT_HEIGHT); y++)
     {
         for(x = xi; x < (xi + LCD_FONT_WIDTH); x++)
         {
            unsigned char c = *(carr+i);
+           
+           //Here we do some masking to get the bit we actually want to print
            pixel = c & mask;
            if(pixel > 0)
            {
@@ -333,6 +350,8 @@ void lcd_write_string(char *s, int x, int y)
     {
         lcd_write_char(*(s+i), x, y);
         
+        //Do our incrementing of x and y such that the string will "wrap"
+        //when it reaches the end of the screen
         x += LCD_FONT_WIDTH + LCD_FONT_PADDINGX;
         
         if(x + LCD_FONT_WIDTH + LCD_FONT_PADDINGX > LCD_WIDTH)
@@ -347,76 +366,3 @@ void lcd_write_string(char *s, int x, int y)
         }
     }
 }
-
-void lcd_write_one(void)
-{
-    int x = 40;
-    int y = 10;
-    int i = 0;
-    int pixel = 0;
-    int mask = 0b10000000;
-    
-    for(y = 10; y < 22; y++)
-    {
-        for(x = 40; x < 48; x++)
-        {
-           pixel = one[i] & mask;
-           if(pixel > 0)
-           {
-               pixel = 1;
-           }
-           lcd_write_pixel(x, y, pixel);
-           lcd_update();
-//           mask = mask << 1;
-//           if(mask > 0b10000000)
-//           {
-//               mask = 0b00000001;
-//               i++;
-//           }
-           
-           mask = mask >> 1;
-           if(mask == 0)
-           {
-               mask = 0b10000000;
-               i++;
-           }
-        }
-    }
-}
-
-void lcd_write_two(void)
-{
-    int x = 40;
-    int y = 10;
-    int i = 0;
-    int pixel = 0;
-    int mask = 0b10000000;
-    
-    for(y = 10; y < 22; y++)
-    {
-        for(x = 40; x < 48; x++)
-        {
-           pixel = two[i] & mask;
-           if(pixel > 0)
-           {
-               pixel = 1;
-           }
-           lcd_write_pixel(x, y, pixel);
-           lcd_update();
-//           mask = mask << 1;
-//           if(mask > 0b10000000)
-//           {
-//               mask = 0b00000001;
-//               i++;
-//           }
-           
-           mask = mask >> 1;
-           if(mask == 0)
-           {
-               mask = 0b10000000;
-               i++;
-           }
-        }
-    }
-}\
-

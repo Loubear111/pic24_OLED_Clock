@@ -25,13 +25,11 @@
 extern "C" {
 #endif
 
-void delay(unsigned int ms);
 void lcd_cmd(unsigned short int packet);
 void lcd_write_pixel(int x, int y, int colour);
-void lcd_writeChar(char c, int x, int y);
 void lcd_write_string(char *s, int x, int y);
+void lcd_clear(int c);
 void lcd_setup(void);
-void lcd_write_one(void);
 void lcd_update(void);
 
 #ifdef	__cplusplus
