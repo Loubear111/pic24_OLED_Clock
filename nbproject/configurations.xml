@@ -7,6 +7,7 @@
       <itemPath>lcd.h</itemPath>
       <itemPath>util.h</itemPath>
       <itemPath>watch_State.h</itemPath>
+      <itemPath>rtc.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -19,6 +20,7 @@
       <itemPath>lcd.c</itemPath>
       <itemPath>util.c</itemPath>
       <itemPath>watch_State.c</itemPath>
+      <itemPath>rtc.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

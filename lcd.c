@@ -74,7 +74,7 @@ void lcd_setup(void)
     //TRISBbits.TRISB8 = 0; // SCK
     //TRISBbits.TRISB7 = 0; // CS
     //TRISBbits.TRISB6 = 0; // D/C
-    //TRISBbits.TRISB4 = 0; // RESET
+    //TRISBbits.TRISB5 = 0; // RESET
 
     // Peripheral Pin Select 
     __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
@@ -101,13 +101,13 @@ void lcd_setup(void)
     _SPI1IF = 0;
     _SPI1IE = 1;
     
-    PORTBbits.RB4 = 0;
+    PORTBbits.RB5 = 0;
     delay(10);
-    PORTBbits.RB4 = 1;
+    PORTBbits.RB5 = 1;
     delay(10);
-    PORTBbits.RB4 = 0;
+    PORTBbits.RB5 = 0;
     delay(10);
-    PORTBbits.RB4 = 1;
+    PORTBbits.RB5 = 1;
     delay(10);
     
     //lcd_cmd(0xA7); //Invert Display cuz
@@ -238,7 +238,7 @@ void lcd_cmd(unsigned short int packet)
     LCD_DC_RESET;
     
     SPI1BUF = packet;
-    delay(100);
+    delay(1);
 }
 
 void lcd_data(unsigned short int packet)

@@ -1,7 +1,9 @@
 #include "xc.h"
 #include "util.h"
 #include "lcd.h"
-
+#include "rtc.h"
+#include <stdlib.h>
+#include <string.h>
 
 /*
  * This is the variables I use to monitor state and edit mode. These should be passed into the display so that the display can handle all the rtc stuff.
@@ -124,15 +126,67 @@ void watch_updateState(void)
     
 }
 
+void watch_printTime()
+{
+    char buffer[20], sec[3], min[3], hr[3];
+    unsigned char seconds = rtc_getSecond();
+    unsigned char minutes = rtc_getMinute();
+    unsigned char hours = rtc_getHour();
+    
+    //before we do anything, clear the whole screen so there's nothing
+    //but the time
+    lcd_clear(0);
+    
+    //convert seconds to a string
+    if(seconds < 10)
+    {
+        sprintf(sec, "0%d", seconds);
+    }
+    else
+    {
+        sprintf(sec, "%d", seconds);
+    }
+    
+    //convert minutes to a string
+    if(minutes < 10)
+    {
+        sprintf(min, "0%d", minutes);
+    }
+    else
+    {
+        sprintf(min, "%d", minutes);
+    }
+    
+    //convert hours to a string
+    if(hours < 10)
+    {
+        sprintf(hr, " %d", hours);
+    }
+    else
+    {
+        sprintf(hr, "%d", hours);
+    }
+    
+    //concatenate all the strings!
+    strcat(buffer, hr);
+    strcat(buffer, ":");
+    strcat(buffer, min);
+    strcat(buffer, ":");
+    strcat(buffer, sec);
+    
+    //print them out at x = 16, y = 28 (this should be the center, I think?)
+    lcd_write_string(buffer, 16, 28);
+}
+
 void watch_update(void)
 {
     if(watch_getState() == 0)
     {
         if(!watch_getEditState())
         {
-            //TODO: Replace lcd_write_string() with RTC_WriteTime
             //lcd_printString("FaceN", 6);
-            lcd_write_string("1:1",0,0);
+            //lcd_write_string("1:1",0,0);
+            watch_printTime();
         }
         else
         {
