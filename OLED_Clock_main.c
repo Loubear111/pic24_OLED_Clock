@@ -5,6 +5,7 @@
 #include <math.h>
 #include "lcd.h"
 #include "util.h"
+#include "rtc.h"
 #include "watch_State.h"
 
 // PIC24FJ64GA002 Configuration Bit Settings
@@ -67,7 +68,11 @@ int main(int argc, char *argv[])
     init_interactivebuttons();
     
     lcd_clear(0);
-    rtc_setTime(12, 25, 30); //set the time (hours, minutes, seconds)
+    //rtc_setTime(12, 25, 30); //set the time (hours, minutes, seconds)
+    
+    rtc_setHour(12);
+    rtc_setMinute(25);
+    rtc_setSecond(30);
     
     while (1)
     {

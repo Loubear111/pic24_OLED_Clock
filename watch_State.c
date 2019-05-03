@@ -3,13 +3,19 @@
 #include "lcd.h"
 #include "rtc.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 /*
  * This is the variables I use to monitor state and edit mode. These should be passed into the display so that the display can handle all the rtc stuff.
  */
 volatile int state = 0; //face will go from 0,1,2 with 0 = clock, 1 = alarm, 2 = stopwatch
+volatile int prevState = 0;
+volatile int prevEditState = 0;
 volatile int edit = 0; //the edit will be set to off and will trigger
+
+volatile int editSel = 0;
+volatile int incB = 0;
 
 
 /*
@@ -114,13 +120,17 @@ void watch_updateState(void)
         }
         if(checkButton(3))
         {
- 
+            incB = !incB;
             delay(200);
         }
         if(checkButton(4))
         {
- 
-          delay(200); 
+            editSel += 1;
+            if(editSel > 2)
+            {
+                editSel = 0;
+            }
+            delay(200); 
         }
     
     
@@ -178,8 +188,67 @@ void watch_printTime()
     lcd_write_string(buffer, 16, 28);
 }
 
+void watch_printSTime(unsigned char seconds, unsigned char minutes, unsigned char hours)
+{
+    char buffer[20], sec[3], min[3], hr[3];
+    
+    //before we do anything, clear the whole screen so there's nothing
+    //but the time
+    lcd_clear(0);
+    
+    //convert seconds to a string
+    if(seconds < 10)
+    {
+        sprintf(sec, "0%d", seconds);
+    }
+    else
+    {
+        sprintf(sec, "%d", seconds);
+    }
+    
+    //convert minutes to a string
+    if(minutes < 10)
+    {
+        sprintf(min, "0%d", minutes);
+    }
+    else
+    {
+        sprintf(min, "%d", minutes);
+    }
+    
+    //convert hours to a string
+    if(hours < 10)
+    {
+        sprintf(hr, " %d", hours);
+    }
+    else
+    {
+        sprintf(hr, "%d", hours);
+    }
+    
+    //concatenate all the strings!
+    strcat(buffer, hr);
+    strcat(buffer, ":");
+    strcat(buffer, min);
+    strcat(buffer, ":");
+    strcat(buffer, sec);
+    
+    //print them out at x = 16, y = 28 (this should be the center, I think?)
+    lcd_write_string(buffer, 16, 28);
+}
+
+
 void watch_update(void)
 {
+    static unsigned char hour, minute, second;
+    
+    if(prevState == 0 && prevEditState == 1 && (state != 0 || edit == 0))
+    {
+        rtc_setHour(hour);
+        rtc_setMinute(minute);
+        rtc_setSecond(second);
+    }
+    
     if(watch_getState() == 0)
     {
         if(!watch_getEditState())
@@ -187,11 +256,47 @@ void watch_update(void)
             //lcd_printString("FaceN", 6);
             //lcd_write_string("1:1",0,0);
             watch_printTime();
+            prevEditState = 0;
         }
         else
         {
             //lcd_printString("FaceE", 6);
-            lcd_write_string("1:2",0,0);
+            
+            if(prevEditState == 0)
+            {
+                second = rtc_getSecond();
+                minute = rtc_getMinute();
+                hour = rtc_getHour();
+            }
+            
+            lcd_write_string("E",0,0);
+            
+            watch_printSTime(second, minute, hour);
+            
+            if(incB)
+            {
+                if(editSel == 0)
+                {
+                    hour += 1;
+                    hour = hour % 24;
+                    incB = 0;
+                }
+                else if(editSel == 1)
+                {
+                    minute += 1;
+                    minute = minute % 60;
+                    incB = 0;
+                }
+                else if(editSel == 2)
+                {
+                    second += 1;
+                    second = second % 60;
+                    incB = 0;
+                }
+            }
+            
+            prevEditState = 1;
+            prevState = 0;
         }
     }
     else if(watch_getState() == 1)

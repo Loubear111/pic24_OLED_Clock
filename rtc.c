@@ -29,7 +29,6 @@ void rtc_setTime(unsigned char hour, unsigned char min, unsigned char sec)
     : /* no inputs */ 
     : "w0", "w1" /* clobbers these working registers */ 
     ); 
-    //RCFGCALbits.RTCWREN = 1; //start with registers unlocked
     
     RCFGCALbits.RTCEN = 0; //disable
     RCFGCALbits.RTCPTR = 3; //set rtc pointer to three so we can set all the values
@@ -46,15 +45,37 @@ void rtc_setTime(unsigned char hour, unsigned char min, unsigned char sec)
     secBCD = (char)floor(sec / 10) << 4; //setting the "tens" digit for second in BCD
     secBCD = secBCD + (sec % 10); //setting the "ones" digit for second in BCD
     
+    //RTCPTR = 3
     RTCVAL = 0b10011100; //Year set, 9.8 aka 98
+    //RTCPTR = 2
     RTCVAL = (0b10000 << 8) + 0b100011; //month 10, day 23
+    //RTCPTR = 1
     RTCVAL = (0b001 << 8) + hourBCD; //day 1, hour 13
+    //RTCPTR = 0
     RTCVAL = (minBCD << 8) + secBCD; //minute 31, seconds 11
     //RTCVAL = 0x1006; //minute 10, second 6        
     
     RCFGCALbits.RTCEN = 1; //enable
     
     RCFGCALbits.RTCWREN = 0;
+}
+
+void rtc_setSecond(unsigned char sec)
+{
+    dt.seconds = sec;
+    rtc_setTime(dt.hours, dt.minutes, sec);
+}
+
+void rtc_setMinute(unsigned char min)
+{
+    dt.minutes = min;
+    rtc_setTime(dt.hours, min, dt.seconds);
+}
+
+void rtc_setHour(unsigned char hour)
+{
+    dt.hours = hour;
+    rtc_setTime(hour, dt.minutes, dt.seconds);
 }
 
 void rtc_updateTime(void)
@@ -119,6 +140,15 @@ void rtc_setup(void)
     : /* no inputs */ 
     : "w0", "w1" /* clobbers these working registers */ 
     ); 
+    
+    //Initialize our struct values all to 0
+    dt.day = 0;
+    dt.hours = 0;
+    dt.minutes = 0;
+    dt.month = 0;
+    dt.seconds = 0;
+    dt.weekday = 0;
+    dt.year = 0;
     
     RCFGCALbits.RTCEN = 1;
     RCFGCALbits.RTCOE = 0;

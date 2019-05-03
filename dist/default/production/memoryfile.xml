@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/pic24_OLED_Clock.production.elf">
+  <executable name="dist/default/production/final_project_v001.X.production.elf">
     <memory name="data">
       <units>bytes</units>
       <length>8192</length>
-      <used>1096</used>
-      <free>7096</free>
+      <used>1108</used>
+      <free>7084</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
       <length>65274</length>
-      <used>8937</used>
-      <free>56337</free>
+      <used>9732</used>
+      <free>55542</free>
     </memory>
   </executable>
 </project>

@@ -12,9 +12,11 @@
 extern "C" {
 #endif
 
-void rtc_setTime(unsigned char hour, unsigned char min, unsigned char sec);
 void rtc_setup(void);
 void rtc_update(void);
+unsigned char rtc_setSecond(unsigned char sec);
+unsigned char rtc_setMinute(unsigned char min);
+unsigned char rtc_setHour(unsigned char hour);
 unsigned char rtc_getSecond(void);
 unsigned char rtc_getMinute(void);
 unsigned char rtc_getHour(void);

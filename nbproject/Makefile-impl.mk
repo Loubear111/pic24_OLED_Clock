@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=pic24_OLED_Clock
+PROJECTNAME=final_project_v001.X
 
 # Active Configuration
 DEFAULTCONF=default
