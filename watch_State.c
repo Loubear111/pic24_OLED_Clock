@@ -16,7 +16,12 @@ volatile int edit = 0; //the edit will be set to off and will trigger
 
 volatile int editSel = 0;
 volatile int incB = 0;
+volatile int alarmEnable = 0;
+static unsigned char AHOUR = 0; 
+static unsigned char AMINUTE = 0; 
+//static volatile int ASECOND = 0; 
 
+void check_Alarm(void);
 
 /*
  * 
@@ -27,12 +32,10 @@ volatile int incB = 0;
  * one being which face you are looking at and the SECOND one being
  * edit or normal mode. The THIRD and FOURTH button are responsible for 
  * functions within the clock face and the alarm face or during the edit face
- * and hence will not always need to be checked.These functions will need to be
- * added later. PLEASE UPDATE THIS PARAGRAPH WHEN THAT IS COMPLETED. 
+ * and hence will not always need to be checked.
  * 
  * 
  */
-
 int checkButton(int button)
 {
      
@@ -115,6 +118,10 @@ void watch_updateState(void)
         }
         if(checkButton(2))
         {
+            if(state == 1)
+            {
+                alarmEnable = !alarmEnable;
+            }
             edit = !edit; 
             delay(200);
         }
@@ -136,6 +143,7 @@ void watch_updateState(void)
     
 }
 
+//Used to print the actual time when we're on the watch face
 void watch_printTime()
 {
     char buffer[20], sec[3], min[3], hr[3];
@@ -147,6 +155,11 @@ void watch_printTime()
     //but the time
     lcd_clear(0);
     
+    if(alarmEnable)
+    {
+        lcd_write_string("A", 118, 0);
+    }
+    
     //convert seconds to a string
     if(seconds < 10)
     {
@@ -177,6 +190,9 @@ void watch_printTime()
         sprintf(hr, "%d", hours);
     }
     
+    //Make sure our buffer is COMPLETELY empty
+    memset(buffer,0,sizeof(buffer));
+    
     //concatenate all the strings!
     strcat(buffer, hr);
     strcat(buffer, ":");
@@ -185,17 +201,37 @@ void watch_printTime()
     strcat(buffer, sec);
     
     //print them out at x = 16, y = 28 (this should be the center, I think?)
-    lcd_write_string(buffer, 16, 28);
+    lcd_write_string(buffer, 28, 28);
 }
 
+//Used to print the time when we are in edit mode or alarm setting mode
 void watch_printSTime(unsigned char seconds, unsigned char minutes, unsigned char hours)
 {
-    char buffer[20], sec[3], min[3], hr[3];
+    //char buffer[10], sec[3], min[3], hr[3];
+    char buffer[20];
+    char sec[3];
+    char min[3];
+    char hr[3];
     
     //before we do anything, clear the whole screen so there's nothing
     //but the time
     lcd_clear(0);
     
+    if(state == 0)
+    {
+        lcd_write_string("E",0,0); //Print an E so we know we're in edit mode
+    }
+    if(state == 1)
+    {
+        lcd_write_string("A",0,28);
+    }
+    
+    if(alarmEnable)
+    {
+        lcd_write_string("A", 118, 0);
+    }
+    
+    
     //convert seconds to a string
     if(seconds < 10)
     {
@@ -219,12 +255,15 @@ void watch_printSTime(unsigned char seconds, unsigned char minutes, unsigned cha
     //convert hours to a string
     if(hours < 10)
     {
-        sprintf(hr, " %d", hours);
+        sprintf(hr, "%d", hours);
     }
     else
     {
         sprintf(hr, "%d", hours);
     }
+    
+    //Make sure our buffer is COMPLETELY empty
+    memset(buffer,0,sizeof(buffer));
     
     //concatenate all the strings!
     strcat(buffer, hr);
@@ -234,14 +273,25 @@ void watch_printSTime(unsigned char seconds, unsigned char minutes, unsigned cha
     strcat(buffer, sec);
     
     //print them out at x = 16, y = 28 (this should be the center, I think?)
-    lcd_write_string(buffer, 16, 28);
+    lcd_write_string(buffer, 28, 28);
 }
 
-
+/* 
+ * Over-arching update function for the watch state-machine, it handles all the 
+ * logic for the three different states (watch face, alarm, stopwatch)
+ */
 void watch_update(void)
 {
     static unsigned char hour, minute, second;
     
+    //Update all the states of the watch based on the button presses
+    watch_updateState(); 
+            
+    //Check if the alarm should be going off
+    check_Alarm();
+    
+    //If this is true then we were just in the edit state for the face and now
+    //we aren't, we should send the values we set in edit mode to the RTC
     if(prevState == 0 && prevEditState == 1 && (state != 0 || edit == 0))
     {
         rtc_setHour(hour);
@@ -249,12 +299,11 @@ void watch_update(void)
         rtc_setSecond(second);
     }
     
+    /* WATCH FACE STATE */
     if(watch_getState() == 0)
     {
         if(!watch_getEditState())
         {
-            //lcd_printString("FaceN", 6);
-            //lcd_write_string("1:1",0,0);
             watch_printTime();
             prevEditState = 0;
         }
@@ -269,9 +318,8 @@ void watch_update(void)
                 hour = rtc_getHour();
             }
             
-            lcd_write_string("E",0,0);
-            
             watch_printSTime(second, minute, hour);
+            //watch_printTime();
             
             if(incB)
             {
@@ -299,19 +347,53 @@ void watch_update(void)
             prevState = 0;
         }
     }
+    
+    /* ALARM STATE */
     else if(watch_getState() == 1)
     {
+        //In this state the edit button controls whether the alarm is enabled or not
+        //so there is no "edit" mode for the alarm
+        watch_printSTime(0, AMINUTE, AHOUR);
+        if(incB)
+        {
+            if(editSel == 0)
+            {
+                AHOUR += 1;
+                AHOUR = AHOUR % 24;
+                incB = 0;
+            }
+            else if(editSel == 1)
+            {
+                AMINUTE += 1;
+                AMINUTE = AMINUTE % 60;
+                incB = 0;
+            }
+            else if(editSel == 2)
+            {
+                AHOUR += 1;
+                AHOUR = AHOUR % 24;
+                incB = 0;
+                editSel = 0; 
+            }
+        }
+        
         if(!watch_getEditState())
         {
-            //lcd_printString("AlarN", 6);
-            lcd_write_string("2:1",0,0);
+            //watch_printSTime(0, AMINUTE, AHOUR);
+            prevEditState = 0;
+            //lcd_write_string("2:1",0,0);
         }
         else
-        {
+        {   
+            prevEditState = 1;
+            prevState = 1;
+            
             //lcd_printString("AlarE", 6);
-            lcd_write_string("2:2",0,0);
+            //lcd_write_string("2:2",0,0);
         }
     }
+    
+    /* STOPWATCH STATE */
     else if(watch_getState() == 2)
     {
         if(!watch_getEditState())
@@ -325,10 +407,35 @@ void watch_update(void)
             lcd_write_string("3:2",0,0);
          }
     }
+    
+    else
+    {
+        //this should never happen
+    }
 }
 
 /*
- * The below functtion sets up the interactive buttons and allows for those button to be usable. Must be set before the infinite loop 
+ * Function that will handle the triggering of the alarm
+ */
+void check_Alarm(void)
+{
+    //We've reached the time when we want the alarm to go off
+    //If alarmEnable is on then we should blink an LED for four seconds
+    if((AHOUR == rtc_getHour()) && (AMINUTE == rtc_getMinute()) && (rtc_getSecond() < 4) && alarmEnable)
+    {
+        //Use mod 2 to "blink" the LED for first four seconds once we have
+        //reached the hour and minute of the alarm
+        PORTBbits.RB2 = !(rtc_getSecond() % 2);
+    }
+    else
+    {
+        PORTBbits.RB2 = 0;
+    }
+    
+}
+
+/*
+ * The below function sets up the interactive buttons and allows for those button to be usable. Must be set before the infinite loop 
  */
 void init_interactivebuttons(void)
 {

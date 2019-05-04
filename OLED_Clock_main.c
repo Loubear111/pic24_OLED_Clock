@@ -37,6 +37,30 @@ void __attribute__((__interrupt__,__auto_psv__)) _SPI1Interrupt(void)
                     // overflow bit
 }
 
+//void __attribute__((interrupt, auto_psv)) _T2Interrupt()
+//{
+//    static volatile int ticks = 0;
+//    //T2CONbits.TON = 0;
+//    //In here we will be setting some pin to low, and then we will
+//    
+//    if(watch_getAlarmFlag())
+//    {
+//        PORTBbits.RB2 = !(ticks % 2);
+//        ticks += 1;
+//        
+//        if(ticks > 3)
+//        {
+//            ticks = 0;
+//            watch_setAlarmFlag(0);
+//            PORTBbits.RB2 = 0;
+//        }
+//    }
+//    
+//    IFS0bits.T2IF = 0;
+//    TMR2 = 0;
+//    //this should be good. 
+//}
+
 void setup(void)
 {
     //__builtin_write_OSCCONL(OSCCON | 0x02); //enable secondary clock source
@@ -51,12 +75,15 @@ void setup(void)
     PORTB = 0x0;
     TRISBbits.TRISB2 = 0; // Heartbeat LED
     
-    //Setup Timer1 to delay (T1 USED IN watch_State)
-    T2CON = 0;
-    PR2 = 15999;
-    TMR2 = 0;
-    IFS0bits.T2IF = 0;
-    T2CONbits.TON = 1;
+    //ENABLING TIMER2 WAS BREAKING THE LCD FOR SOME REASON, AVOID USING IT
+    //Setup Timer2 to delay (T1 USED IN watch_State)
+//    T2CON = 0; 
+//    TMR2 = 0; 
+//    PR2 = 62500 -1;
+//    T2CONbits.TCKPS = 0b11;    //this is 256 prescalar 
+//    IFS0bits.T2IF = 0;         //setting flag to off; 
+//    IEC0bits.T2IE = 1;
+//    T2CONbits.TON = 0;         //keep the alarm turned off 
 }
 
 int main(int argc, char *argv[])
@@ -68,17 +95,15 @@ int main(int argc, char *argv[])
     init_interactivebuttons();
     
     lcd_clear(0);
-    //rtc_setTime(12, 25, 30); //set the time (hours, minutes, seconds)
     
     rtc_setHour(12);
-    rtc_setMinute(25);
-    rtc_setSecond(30);
+    rtc_setMinute(0);
+    rtc_setSecond(0);
     
     while (1)
     {
         rtc_update();
         lcd_update();
-        watch_updateState(); 
         watch_update();
     }
 
