@@ -2,6 +2,7 @@
 #include "util.h"
 #include "lcd.h"
 #include "rtc.h"
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,9 +20,24 @@ volatile int incB = 0;
 volatile int alarmEnable = 0;
 static unsigned char AHOUR = 0; 
 static unsigned char AMINUTE = 0; 
-//static volatile int ASECOND = 0; 
+//static volatile int ASECOND = 0;
+
+volatile int t1Flag = 0;
+int stopWatchToggle = 0;
 
 void check_Alarm(void);
+void Stopwatch_updateTime(void);
+void Reset_Stopwatch(void);
+void Start_Stop_Stopwatch(void);
+
+volatile unsigned long int StopwatchOverflow = 0; 
+
+void __attribute__((__interrupt__,__auto_psv__)) _T1Interrupt(void)
+{
+    t1Flag = 1;
+    StopwatchOverflow++;
+    IFS0bits.T1IF = 0;
+}
 
 /*
  * 
@@ -105,10 +121,11 @@ int watch_getEditState(void)
  */
 void watch_updateState(void)
 {
-         if(checkButton(1))
+        if(checkButton(1))
         {
             state+=1; 
-            edit = 0; 
+            edit = 0;
+            editSel = 0;
             state = state%3;
 //            if(state>2)
 //            {
@@ -118,29 +135,50 @@ void watch_updateState(void)
         }
         if(checkButton(2))
         {
+            editSel = 0;
             if(state == 1)
             {
                 alarmEnable = !alarmEnable;
+            }
+            if(state == 2)
+            {
+                Start_Stop_Stopwatch();
             }
             edit = !edit; 
             delay(200);
         }
         if(checkButton(3))
         {
+            editSel = 0;
             incB = !incB;
             delay(200);
         }
-        if(checkButton(4))
+        if(checkButton(4) && state != 2)
         {
             editSel += 1;
             if(editSel > 2)
             {
                 editSel = 0;
             }
+         
+            if(state == 0 && edit == 0)
+            {
+                static int easterEgg = 0;
+                
+                if(!easterEgg)
+                {
+                   lcd_cmd(0xA7); //Invert Display on cuz 
+                   easterEgg = 1;
+                }
+                else
+                {
+                    lcd_cmd(0xA6); //Invert Display off cuz  
+                    easterEgg = 0;
+                }
+            }
+            
             delay(200); 
-        }
-    
-    
+        }   
 }
 
 //Used to print the actual time when we're on the watch face
@@ -272,7 +310,7 @@ void watch_printSTime(unsigned char seconds, unsigned char minutes, unsigned cha
     strcat(buffer, ":");
     strcat(buffer, sec);
     
-    //print them out at x = 16, y = 28 (this should be the center, I think?)
+    //print them out at x = 28, y = 28 (this should be the center, I think?)
     lcd_write_string(buffer, 28, 28);
 }
 
@@ -297,6 +335,11 @@ void watch_update(void)
         rtc_setHour(hour);
         rtc_setMinute(minute);
         rtc_setSecond(second);
+    }
+    
+    if(prevState == 1 && state == 2)
+    {
+        Reset_Stopwatch();
     }
     
     /* WATCH FACE STATE */
@@ -396,16 +439,18 @@ void watch_update(void)
     /* STOPWATCH STATE */
     else if(watch_getState() == 2)
     {
-        if(!watch_getEditState())
-         {
-            //lcd_printString("STOPN", 6);
-            lcd_write_string("3:1",0,0);
-         }
-         else
-         {
-            //lcd_printString("STOPE", 6);
-            lcd_write_string("3:2",0,0);
-         }
+        Stopwatch_updateTime();
+        
+        if(incB)
+        {
+            if(T1CONbits.TON)
+            {
+                Start_Stop_Stopwatch();
+            }
+            Reset_Stopwatch();
+            incB = 0;
+        }
+        
     }
     
     else
@@ -454,3 +499,88 @@ void init_interactivebuttons(void)
     
 }
 
+void init_Stopwatch(void)
+{
+    PR1=328;                //flag will trigger every 0.01 seconds
+    T1CON = 0x0006;         //sets TMR1 to take an external clock
+    TMR1 = 0;
+    IEC0bits.T1IE = 1;
+    IPC0bits.T1IP = 3;
+    T1CONbits.TON = 0;
+    _T1IF = 0;
+}
+
+void Reset_Stopwatch(void)
+{
+	StopwatchOverflow = 0;
+    lcd_write_string("0:00:00", 28, 28);        
+}
+
+void Start_Stop_Stopwatch(void)
+{
+    TMR1 = 0;
+    if(T1CONbits.TON)
+    {
+        T1CONbits.TON = 0;
+    }
+    else
+    {
+        T1CONbits.TON = 1;
+    }
+}
+
+void Stopwatch_updateTime(void)
+{
+    lcd_clear(0);
+    //if(t1Flag)
+    //{
+        t1Flag = 0;
+        char NewTime[7];    //very janky way of updating the time
+        char cDigit[4];
+        
+        //calculating minutes
+        unsigned long int csecs = StopwatchOverflow; //this is in centi-seconds
+        unsigned long int secs = csecs * 0.01f;
+        unsigned long int min = floor(secs / 60);
+        secs = floor(secs - (min * 60));
+        csecs = (csecs - (secs * 100) - (6000*min));
+        
+        memset(NewTime,0,sizeof(NewTime));
+        
+        sprintf(cDigit, "%lu", min);
+        strcat(NewTime, cDigit);
+        strcat(NewTime, ":");
+        
+        if(secs < 10)
+        {
+           sprintf(cDigit, "0%lu", secs); 
+        }
+        else
+        {
+            sprintf(cDigit, "%lu", secs);
+        }
+        strcat(NewTime, cDigit);
+        strcat(NewTime, ":");
+        
+        if(csecs < 10)
+        {
+           sprintf(cDigit, "0%lu", csecs); 
+        }
+        else
+        {
+            sprintf(cDigit, "%lu", csecs);
+        }
+        strcat(NewTime, cDigit);
+        
+        lcd_write_string(NewTime, 28, 28);
+        
+    //}
+}
+
+void watch_setup(void)
+{
+    init_Stopwatch();
+    init_interactivebuttons();
+}
+
+//

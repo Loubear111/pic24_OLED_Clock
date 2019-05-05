@@ -13,9 +13,8 @@ extern "C" {
 #endif
 
     
-void init_interactivebuttons(void);
+void watch_setup(void);
 int checkButton(int button); 
-void wait(int ms); 
     
 //extern int state;
 //extern int edit; 
@@ -31,3 +30,4 @@ void watch_update(void);
 
 #endif	/* WATCH_STATE_HEADER_H */
 
+//

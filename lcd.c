@@ -70,7 +70,6 @@ unsigned char frame_buffer [1024];
 /* PRIVATE FUNCTION PROTOTYPES */
 
 void lcd_data(unsigned short int packet);
-void lcd_cmd(unsigned short int packet);
 void lcd_writeChar(char c, int x, int y);
 
 /* PUBLIC FUNCTIONS */
@@ -104,6 +103,7 @@ void lcd_setup(void)
     SPI1STAT = 0;
     SPI1STATbits.SISEL = 0b101; // IF set when last bit is shifted out
                                 // That means the SPI xfer is complete.
+    IPC2bits.SPF1IP = 5;
     SPI1STATbits.SPIEN = 1;
     
     _SPI1IF = 0;
@@ -152,7 +152,8 @@ void lcd_setup(void)
     lcd_cmd(0xA6); //NORMALDISPLAY
     lcd_cmd(0x2E); //Deactivate Scroll
     
-    //lcd_cmd(0xA7); //Invert Display cuz
+    //lcd_cmd(0xA7); //Invert Display on cuz
+    lcd_cmd(0xA6); //Invert Display off cuz
     lcd_cmd(0xAF); //display on
     
     //Initialize the frame buffer
@@ -382,3 +383,5 @@ void lcd_write_string(char *s, int x, int y)
         }
     }
 }
+
+//

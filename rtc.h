@@ -28,3 +28,4 @@ unsigned char rtc_getHour(void);
 
 #endif	/* RTC_H */
 
+//
