@@ -144,12 +144,15 @@ void watch_updateState(void)
             {
                 Start_Stop_Stopwatch();
             }
-            edit = !edit; 
+            
+            if(state == 0)
+            {
+                edit = !edit; 
+            }
             delay(200);
         }
         if(checkButton(3))
         {
-            editSel = 0;
             incB = !incB;
             delay(200);
         }

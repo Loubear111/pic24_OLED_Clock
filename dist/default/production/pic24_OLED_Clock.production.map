@@ -124,11 +124,11 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0xee4          0x1656  (5718)
 .const                      0x10e4                0xd6           0x141  (321)
-.text                       0x11ba               0xd0c          0x1392  (5010)
-.dinit                      0x1ec6                0x4a            0x6f  (111)
-.text                       0x1f10                0x54            0x7e  (126)
+.text                       0x11ba               0xd10          0x1398  (5016)
+.dinit                      0x1eca                0x4a            0x6f  (111)
+.text                       0x1f14                0x54            0x7e  (126)
 
-                 Total "program" memory used (bytes):         0x2c16  (11286) 17%
+                 Total "program" memory used (bytes):         0x2c1c  (11292) 17%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x2000]
@@ -249,45 +249,45 @@ External Symbols in Program Memory (by address):
                   0x001254                  _watch_getState
                   0x00125c                  _watch_getEditState
                   0x001264                  _watch_updateState
-                  0x00131e                  _watch_printTime
-                  0x0013f4                  _watch_printSTime
-                  0x0014e6                  _watch_update
-                  0x001688                  _check_Alarm
-                  0x0016cc                  _init_interactivebuttons
-                  0x0016e2                  _init_Stopwatch
-                  0x001704                  _Reset_Stopwatch
-                  0x001716                  _Start_Stop_Stopwatch
-                  0x00172e                  _Stopwatch_updateTime
-                  0x00187e                  _watch_setup
-                  0x001888                  _lcd_setup
-                  0x0019ac                  _lcd_write_pixel
-                  0x001a78                  _lcd_clear
-                  0x001aaa                  _lcd_update
-                  0x001aca                  _lcd_cmd
-                  0x001ade                  _lcd_data
-                  0x001aee                  _lcd_write_char
-                  0x001c32                  _lcd_write_string
-                  0x001c8e                  _rtc_setTime
-                  0x001d74                  _rtc_setSecond
-                  0x001d8c                  _rtc_setMinute
-                  0x001da6                  _rtc_setHour
-                  0x001dc2                  _rtc_updateTime
-                  0x001e48                  _rtc_setup
-                  0x001ea0                  _rtc_update
-                  0x001ea8                  _rtc_getSecond
-                  0x001eb2                  _rtc_getMinute
-                  0x001ebc                  _rtc_getHour
-                  0x001f10                  _setup
-                  0x001f28                  _main
-                  0x001f4e                  _delay
+                  0x001322                  _watch_printTime
+                  0x0013f8                  _watch_printSTime
+                  0x0014ea                  _watch_update
+                  0x00168c                  _check_Alarm
+                  0x0016d0                  _init_interactivebuttons
+                  0x0016e6                  _init_Stopwatch
+                  0x001708                  _Reset_Stopwatch
+                  0x00171a                  _Start_Stop_Stopwatch
+                  0x001732                  _Stopwatch_updateTime
+                  0x001882                  _watch_setup
+                  0x00188c                  _lcd_setup
+                  0x0019b0                  _lcd_write_pixel
+                  0x001a7c                  _lcd_clear
+                  0x001aae                  _lcd_update
+                  0x001ace                  _lcd_cmd
+                  0x001ae2                  _lcd_data
+                  0x001af2                  _lcd_write_char
+                  0x001c36                  _lcd_write_string
+                  0x001c92                  _rtc_setTime
+                  0x001d78                  _rtc_setSecond
+                  0x001d90                  _rtc_setMinute
+                  0x001daa                  _rtc_setHour
+                  0x001dc6                  _rtc_updateTime
+                  0x001e4c                  _rtc_setup
+                  0x001ea4                  _rtc_update
+                  0x001eac                  _rtc_getSecond
+                  0x001eb6                  _rtc_getMinute
+                  0x001ec0                  _rtc_getHour
+                  0x001f14                  _setup
+                  0x001f2c                  _main
+                  0x001f52                  _delay
 
 External Symbols in Program Memory (by name):
 
                   0x001174                  _A
                   0x001180                  _E
-                  0x001704                  _Reset_Stopwatch
-                  0x001716                  _Start_Stop_Stopwatch
-                  0x00172e                  _Stopwatch_updateTime
+                  0x001708                  _Reset_Stopwatch
+                  0x00171a                  _Start_Stop_Stopwatch
+                  0x001732                  _Stopwatch_updateTime
                   0x000308                  __DefaultInterrupt
                   0x000ae2                  __Litob
                   0x000d40                  __Puttxt
@@ -327,39 +327,39 @@ External Symbols in Program Memory (by name):
                   0x000200                  __resetPRI
                   0x000724                  __sprintf_cdnopuxX
                   0x0011ba                  _checkButton
-                  0x001688                  _check_Alarm
+                  0x00168c                  _check_Alarm
                   0x001168                  _colon
-                  0x001f4e                  _delay
+                  0x001f52                  _delay
                   0x001144                  _eight
                   0x001120                  _five
                   0x000414                  _floorf
                   0x001114                  _four
-                  0x0016e2                  _init_Stopwatch
-                  0x0016cc                  _init_interactivebuttons
-                  0x001a78                  _lcd_clear
-                  0x001aca                  _lcd_cmd
-                  0x001ade                  _lcd_data
-                  0x001888                  _lcd_setup
-                  0x001aaa                  _lcd_update
-                  0x001aee                  _lcd_write_char
-                  0x0019ac                  _lcd_write_pixel
-                  0x001c32                  _lcd_write_string
-                  0x001f28                  _main
+                  0x0016e6                  _init_Stopwatch
+                  0x0016d0                  _init_interactivebuttons
+                  0x001a7c                  _lcd_clear
+                  0x001ace                  _lcd_cmd
+                  0x001ae2                  _lcd_data
+                  0x00188c                  _lcd_setup
+                  0x001aae                  _lcd_update
+                  0x001af2                  _lcd_write_char
+                  0x0019b0                  _lcd_write_pixel
+                  0x001c36                  _lcd_write_string
+                  0x001f2c                  _main
                   0x0006da                  _memcpy
                   0x0006e8                  _memset
                   0x001150                  _nine
                   0x0010f0                  _one
-                  0x001ebc                  _rtc_getHour
-                  0x001eb2                  _rtc_getMinute
-                  0x001ea8                  _rtc_getSecond
-                  0x001da6                  _rtc_setHour
-                  0x001d8c                  _rtc_setMinute
-                  0x001d74                  _rtc_setSecond
-                  0x001c8e                  _rtc_setTime
-                  0x001e48                  _rtc_setup
-                  0x001ea0                  _rtc_update
-                  0x001dc2                  _rtc_updateTime
-                  0x001f10                  _setup
+                  0x001ec0                  _rtc_getHour
+                  0x001eb6                  _rtc_getMinute
+                  0x001eac                  _rtc_getSecond
+                  0x001daa                  _rtc_setHour
+                  0x001d90                  _rtc_setMinute
+                  0x001d78                  _rtc_setSecond
+                  0x001c92                  _rtc_setTime
+                  0x001e4c                  _rtc_setup
+                  0x001ea4                  _rtc_update
+                  0x001dc6                  _rtc_updateTime
+                  0x001f14                  _setup
                   0x001138                  _seven
                   0x00112c                  _six
                   0x00115c                  _space
@@ -371,10 +371,10 @@ External Symbols in Program Memory (by name):
                   0x00118c                  _unknown
                   0x00125c                  _watch_getEditState
                   0x001254                  _watch_getState
-                  0x0013f4                  _watch_printSTime
-                  0x00131e                  _watch_printTime
-                  0x00187e                  _watch_setup
-                  0x0014e6                  _watch_update
+                  0x0013f8                  _watch_printSTime
+                  0x001322                  _watch_printTime
+                  0x001882                  _watch_setup
+                  0x0014ea                  _watch_update
                   0x001264                  _watch_updateState
                   0x0010e4                  _zero
                   0x000716                  sprintf_cdnopuxX.XXeo:_prout
@@ -570,13 +570,13 @@ __CONFIG1
  .debug_abbrev    0x00034a        0x1fd build/default/production/watch_State.o
  .debug_abbrev    0x000547        0x15e build/default/production/rtc.o
 
-.debug_line       0x000000        0x621
+.debug_line       0x000000        0x61e
  *(.debug_line)
- .debug_line      0x000000        0x118 build/default/production/OLED_Clock_main.o
- .debug_line      0x000118        0x199 build/default/production/lcd.o
- .debug_line      0x0002b1         0x37 build/default/production/util.o
- .debug_line      0x0002e8        0x1fc build/default/production/watch_State.o
- .debug_line      0x0004e4        0x13d build/default/production/rtc.o
+ .debug_line      0x000000        0x115 build/default/production/OLED_Clock_main.o
+ .debug_line      0x000115        0x199 build/default/production/lcd.o
+ .debug_line      0x0002ae         0x37 build/default/production/util.o
+ .debug_line      0x0002e5        0x1fc build/default/production/watch_State.o
+ .debug_line      0x0004e1        0x13d build/default/production/rtc.o
 
 .debug_frame      0x000000        0x4d2
  *(.debug_frame)
@@ -1365,49 +1365,49 @@ __c30_signature
                     0x918c                  _unknown
  .const             0x9198         0x22 build/default/production/watch_State.o
 
-.text             0x0011ba        0xd0c
- .text            0x0011ba        0x6ce build/default/production/watch_State.o
+.text             0x0011ba        0xd10
+ .text            0x0011ba        0x6d2 build/default/production/watch_State.o
                   0x0011ba                  _checkButton
                   0x001254                  _watch_getState
                   0x00125c                  _watch_getEditState
                   0x001264                  _watch_updateState
-                  0x00131e                  _watch_printTime
-                  0x0013f4                  _watch_printSTime
-                  0x0014e6                  _watch_update
-                  0x001688                  _check_Alarm
-                  0x0016cc                  _init_interactivebuttons
-                  0x0016e2                  _init_Stopwatch
-                  0x001704                  _Reset_Stopwatch
-                  0x001716                  _Start_Stop_Stopwatch
-                  0x00172e                  _Stopwatch_updateTime
-                  0x00187e                  _watch_setup
- .text            0x001888        0x406 build/default/production/lcd.o
-                  0x001888                  _lcd_setup
-                  0x0019ac                  _lcd_write_pixel
-                  0x001a78                  _lcd_clear
-                  0x001aaa                  _lcd_update
-                  0x001aca                  _lcd_cmd
-                  0x001ade                  _lcd_data
-                  0x001aee                  _lcd_write_char
-                  0x001c32                  _lcd_write_string
- .text            0x001c8e        0x238 build/default/production/rtc.o
-                  0x001c8e                  _rtc_setTime
-                  0x001d74                  _rtc_setSecond
-                  0x001d8c                  _rtc_setMinute
-                  0x001da6                  _rtc_setHour
-                  0x001dc2                  _rtc_updateTime
-                  0x001e48                  _rtc_setup
-                  0x001ea0                  _rtc_update
-                  0x001ea8                  _rtc_getSecond
-                  0x001eb2                  _rtc_getMinute
-                  0x001ebc                  _rtc_getHour
+                  0x001322                  _watch_printTime
+                  0x0013f8                  _watch_printSTime
+                  0x0014ea                  _watch_update
+                  0x00168c                  _check_Alarm
+                  0x0016d0                  _init_interactivebuttons
+                  0x0016e6                  _init_Stopwatch
+                  0x001708                  _Reset_Stopwatch
+                  0x00171a                  _Start_Stop_Stopwatch
+                  0x001732                  _Stopwatch_updateTime
+                  0x001882                  _watch_setup
+ .text            0x00188c        0x406 build/default/production/lcd.o
+                  0x00188c                  _lcd_setup
+                  0x0019b0                  _lcd_write_pixel
+                  0x001a7c                  _lcd_clear
+                  0x001aae                  _lcd_update
+                  0x001ace                  _lcd_cmd
+                  0x001ae2                  _lcd_data
+                  0x001af2                  _lcd_write_char
+                  0x001c36                  _lcd_write_string
+ .text            0x001c92        0x238 build/default/production/rtc.o
+                  0x001c92                  _rtc_setTime
+                  0x001d78                  _rtc_setSecond
+                  0x001d90                  _rtc_setMinute
+                  0x001daa                  _rtc_setHour
+                  0x001dc6                  _rtc_updateTime
+                  0x001e4c                  _rtc_setup
+                  0x001ea4                  _rtc_update
+                  0x001eac                  _rtc_getSecond
+                  0x001eb6                  _rtc_getMinute
+                  0x001ec0                  _rtc_getHour
 
-.dinit            0x001ec6         0x4a
- .dinit           0x001ec6         0x4a data_init
+.dinit            0x001eca         0x4a
+ .dinit           0x001eca         0x4a data_init
 
-.text             0x001f10         0x54
- .text            0x001f10         0x3e build/default/production/OLED_Clock_main.o
-                  0x001f10                  _setup
-                  0x001f28                  _main
- .text            0x001f4e         0x16 build/default/production/util.o
-                  0x001f4e                  _delay
+.text             0x001f14         0x54
+ .text            0x001f14         0x3e build/default/production/OLED_Clock_main.o
+                  0x001f14                  _setup
+                  0x001f2c                  _main
+ .text            0x001f52         0x16 build/default/production/util.o
+                  0x001f52                  _delay
