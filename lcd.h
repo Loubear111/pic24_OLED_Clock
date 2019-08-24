@@ -8,10 +8,10 @@
 #ifndef LCD_H
 #define	LCD_H
 
-#define LCD_CS_SET      PORTBbits.RB2 = 1
+//#define LCD_CS_SET      PORTBbits.RB2 = 1 // CS isn't currently used, this pin on LCD is just tied to ground.
 #define LCD_DC_SET      PORTBbits.RB6 = 1
 
-#define LCD_CS_RESET    PORTBbits.RB2 = 0
+//#define LCD_CS_RESET    PORTBbits.RB2 = 0
 #define LCD_DC_RESET    PORTBbits.RB6 = 0
 
 #define LCD_FONT_HEIGHT     12

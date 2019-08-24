@@ -10,8 +10,8 @@
 #ifndef UTIL_H
 #define	UTIL_H
 
-#define LED_SET         PORTBbits.RB2 = 1;
-#define LED_RESET       PORTBbits.RB2 = 0;
+#define LED_RESET         PORTBbits.RB2 = 1;
+#define LED_SET       PORTBbits.RB2 = 0;
 
 #ifdef	__cplusplus
 extern "C" {

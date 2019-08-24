@@ -50,6 +50,8 @@ void setup(void)
     //PORTB = 0xffff;
     PORTB = 0x0;
     TRISBbits.TRISB2 = 0; // Heartbeat LED
+    
+    LED_SET;
 }
 
 int main(int argc, char *argv[])

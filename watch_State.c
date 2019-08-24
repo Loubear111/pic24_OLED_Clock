@@ -15,6 +15,12 @@ volatile int prevState = 0;
 volatile int prevEditState = 0;
 volatile int edit = 0; //the edit will be set to off and will trigger
 
+// boolean determine if we've debounced (we only debounce one at a time)
+// 1 = timeout complete
+// 0 = timeout incomplete
+volatile unsigned short buttonDebounceTimeout = 1;
+volatile unsigned short buttonHoldTimeout = 1;
+
 volatile int editSel = 0;
 volatile int incB = 0;
 volatile int alarmEnable = 0;
@@ -25,6 +31,7 @@ static unsigned char AMINUTE = 0;
 volatile int t1Flag = 0;
 int stopWatchToggle = 0;
 
+void button_StartNonBlockingDelay(int ms);
 void check_Alarm(void);
 void Stopwatch_updateTime(void);
 void Reset_Stopwatch(void);
@@ -39,6 +46,13 @@ void __attribute__((__interrupt__,__auto_psv__)) _T1Interrupt(void)
     IFS0bits.T1IF = 0;
 }
 
+void __attribute__((__interrupt__,__auto_psv__)) _T2Interrupt(void)
+{
+    buttonDebounceTimeout = 1;
+    IFS0bits.T2IF = 0;
+    T2CONbits.TON = 0;
+    TMR2 = 0;
+}
 /*
  * 
  * 
@@ -121,19 +135,15 @@ int watch_getEditState(void)
  */
 void watch_updateState(void)
 {
-        if(checkButton(1))
+        if(checkButton(1) && buttonDebounceTimeout)
         {
             state+=1; 
             edit = 0;
             editSel = 0;
             state = state%3;
-//            if(state>2)
-//            {
-//                state = 0; 
-//            }
-             delay(200);
+            button_StartNonBlockingDelay(500);
         }
-        if(checkButton(2))
+        if(checkButton(2) && buttonDebounceTimeout)
         {
             editSel = 0;
             if(state == 1)
@@ -149,14 +159,30 @@ void watch_updateState(void)
             {
                 edit = !edit; 
             }
-            delay(200);
+            button_StartNonBlockingDelay(500);
         }
-        if(checkButton(3))
+        if(checkButton(3) && buttonDebounceTimeout)
         {
             incB = !incB;
-            delay(200);
+            
+            if(state == 0 && edit == 0)
+            {
+                static short ledToggle = 1;
+                
+                if(!ledToggle)
+                {
+                    LED_SET;
+                    ledToggle = 1;
+                }
+                else
+                {
+                    LED_RESET;
+                    ledToggle = 0;
+                }
+            }
+            button_StartNonBlockingDelay(200);
         }
-        if(checkButton(4) && state != 2)
+        if(checkButton(4) && state != 2 && buttonDebounceTimeout)
         {
             editSel += 1;
             if(editSel > 2)
@@ -166,7 +192,7 @@ void watch_updateState(void)
          
             if(state == 0 && edit == 0)
             {
-                static int easterEgg = 0;
+                static short easterEgg = 0;
                 
                 if(!easterEgg)
                 {
@@ -179,8 +205,7 @@ void watch_updateState(void)
                     easterEgg = 0;
                 }
             }
-            
-            delay(200); 
+            button_StartNonBlockingDelay(200);
         }   
 }
 
@@ -477,9 +502,16 @@ void check_Alarm(void)
     }
     else
     {
-        PORTBbits.RB2 = 0;
+        //PORTBbits.RB2 = 0;
     }
     
+}
+
+void button_StartNonBlockingDelay(int ms)
+{
+    PR2 = floor(ms / (.000016));
+    buttonDebounceTimeout = 0;
+    T2CONbits.TON = 1;
 }
 
 /*
@@ -492,6 +524,14 @@ void init_interactivebuttons(void)
     TRISB |= 0b1111000000000000;        //setting up RB15-RB14 to input ports 
              //5432109876543210
      
+    PR2=31250;                //flag will trigger every 500 ms
+    T2CON = 0x0000;         //sets TMR2 to take an external clock
+    TMR2 = 0;
+    IEC0bits.T2IE = 1;
+    T2CONbits.TCKPS = 0b11; //1:64 pre-scaler
+    T2CONbits.TON = 0;
+    _T2IF = 0;
+    
     //these ports will read high when there is not click but read low when a click occurs because they will short        
     //this is where we will set the pull up resistor
     //setting a pullup module on device pins 23-26  or RP(12-15) or RB(12-15)

@@ -243,7 +243,7 @@ void lcd_update(void)
 void lcd_cmd(unsigned short int packet)
 {
     //CS to 0 DC to 0 for command packet
-    LCD_CS_RESET;
+    //LCD_CS_RESET;
     LCD_DC_RESET;
     
     SPI1BUF = packet;
@@ -253,7 +253,7 @@ void lcd_cmd(unsigned short int packet)
 void lcd_data(unsigned short int packet)
 {
     //CS to 0 DC to 1 for data ram packet
-    LCD_CS_RESET;
+    //LCD_CS_RESET;
     LCD_DC_SET;
     
     SPI1BUF = packet;
