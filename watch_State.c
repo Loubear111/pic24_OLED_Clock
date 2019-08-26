@@ -68,52 +68,182 @@ void __attribute__((__interrupt__,__auto_psv__)) _T2Interrupt(void)
  */
 int checkButton(int button)
 {
-     
+    static short buttonState[] = {0, 0, 0, 0};
+    static short buttonIsClick = 0;
+    static short buttonControlLock = 0;
+    
     if(button == 1)
     {
-        if(!PORTBbits.RB15)
+        if(buttonControlLock == 1 || buttonControlLock == 0)
         {
-            
-            return !PORTBbits.RB15;
-        } 
-        return 0; 
+            if(!PORTBbits.RB15)
+            {
+                // lock down button state machine to focus on this button
+                buttonControlLock = 1;
+
+                // button was just pressed, we need to wait for release now
+                if(buttonState[0] == 0 && buttonDebounceTimeout)
+                {
+                    buttonState[0] = 1;
+                    //button_StartNonBlockingDelay(50);
+                    return 0;
+                }    
+                return 0;
+            }
+            else
+            {
+                if(buttonState[0] == 1 && buttonDebounceTimeout)
+                {
+                    button_StartNonBlockingDelay(20);
+                    buttonIsClick = 1;
+                    buttonState[0] = 0;
+                    return 0;
+                }
+
+                if(buttonState[0] == 0 && buttonDebounceTimeout && buttonIsClick)
+                {
+                    buttonIsClick = 0;
+
+                    // release state machine from this button
+                    buttonControlLock = 0;
+
+                    return 1;
+                }
+            }
+            return 0; 
+        }
+        return 0;
     }
     else if(button == 2)
     {
-        if(!PORTBbits.RB14)
+        if(buttonControlLock == 2 || buttonControlLock == 0)
         {
-            
-            return !PORTBbits.RB14;
-        }   
-        return 0; 
+            if(!PORTBbits.RB14)
+            {
+                // lock down button state machine to focus on this button
+                buttonControlLock = 2;
+
+                // button was just pressed, we need to wait for release now
+                if(buttonState[1] == 0 && buttonDebounceTimeout)
+                {
+                    buttonState[1] = 1;
+                    //button_StartNonBlockingDelay(50);
+                    return 0;
+                }    
+                return 0;
+            }
+            else
+            {
+                if(buttonState[1] == 1 && buttonDebounceTimeout)
+                {
+                    button_StartNonBlockingDelay(20);
+                    buttonIsClick = 1;
+                    buttonState[1] = 0;
+                    return 0;
+                }
+
+                if(buttonState[1] == 0 && buttonDebounceTimeout && buttonIsClick)
+                {
+                    buttonIsClick = 0;
+
+                    // release state machine from this button
+                    buttonControlLock = 0;
+
+                    return 1;
+                }
+            }
+            return 0; 
+        }
+        return 0;
     }
     else if(button == 3)
     {
-        if(!PORTBbits.RB13)
+        if(buttonControlLock == 3 || buttonControlLock == 0)
         {
-           
-            return !PORTBbits.RB13;
+            if(!PORTBbits.RB13)
+            {
+                // lock down button state machine to focus on this button
+                buttonControlLock = 3;
+
+                // button was just pressed, we need to wait for release now
+                if(buttonState[2] == 0 && buttonDebounceTimeout)
+                {
+                    buttonState[2] = 1;
+                    //button_StartNonBlockingDelay(50);
+                    return 0;
+                }    
+                return 0;
+            }
+            else
+            {
+                if(buttonState[2] == 1 && buttonDebounceTimeout)
+                {
+                    button_StartNonBlockingDelay(20);
+                    buttonIsClick = 1;
+                    buttonState[2] = 0;
+                    return 0;
+                }
+
+                if(buttonState[2] == 0 && buttonDebounceTimeout && buttonIsClick)
+                {
+                    buttonIsClick = 0;
+
+                    // release state machine from this button
+                    buttonControlLock = 0;
+
+                    return 1;
+                }
+            }
+            return 0; 
         }
-        return 0; 
-        
+        return 0;
     }
     else if(button == 4)
     {
-        if(!PORTBbits.RB12)
+        if(buttonControlLock == 4 || buttonControlLock == 0)
         {
-            
-            return !PORTBbits.RB12;
+            if(!PORTBbits.RB12)
+            {
+                // lock down button state machine to focus on this button
+                buttonControlLock = 4;
+
+                // button was just pressed, we need to wait for release now
+                if(buttonState[3] == 0 && buttonDebounceTimeout)
+                {
+                    buttonState[3] = 1;
+                    //button_StartNonBlockingDelay(50);
+                    return 0;
+                }    
+                return 0;
+            }
+            else
+            {
+                if(buttonState[3] == 1 && buttonDebounceTimeout)
+                {
+                    button_StartNonBlockingDelay(20);
+                    buttonIsClick = 1;
+                    buttonState[3] = 0;
+                    return 0;
+                }
+
+                if(buttonState[3] == 0 && buttonDebounceTimeout && buttonIsClick)
+                {
+                    buttonIsClick = 0;
+
+                    // release state machine from this button
+                    buttonControlLock = 0;
+
+                    return 1;
+                }
+            }
+            return 0; 
         }
-        return 0; 
+        return 0;
     }
     else
     {
         return 0; 
     }
-    
-    
-    
-    
 }
 
 int watch_getState(void)
@@ -135,15 +265,14 @@ int watch_getEditState(void)
  */
 void watch_updateState(void)
 {
-        if(checkButton(1) && buttonDebounceTimeout)
+        if(checkButton(1))
         {
             state+=1; 
             edit = 0;
             editSel = 0;
             state = state%3;
-            button_StartNonBlockingDelay(500);
         }
-        if(checkButton(2) && buttonDebounceTimeout)
+        if(checkButton(2))
         {
             editSel = 0;
             if(state == 1)
@@ -159,9 +288,8 @@ void watch_updateState(void)
             {
                 edit = !edit; 
             }
-            button_StartNonBlockingDelay(500);
         }
-        if(checkButton(3) && buttonDebounceTimeout)
+        if(checkButton(3))
         {
             incB = !incB;
             
@@ -180,9 +308,8 @@ void watch_updateState(void)
                     ledToggle = 0;
                 }
             }
-            button_StartNonBlockingDelay(200);
         }
-        if(checkButton(4) && state != 2 && buttonDebounceTimeout)
+        if(checkButton(4) && state != 2)
         {
             editSel += 1;
             if(editSel > 2)
@@ -205,7 +332,6 @@ void watch_updateState(void)
                     easterEgg = 0;
                 }
             }
-            button_StartNonBlockingDelay(200);
         }   
 }
 
@@ -509,7 +635,7 @@ void check_Alarm(void)
 
 void button_StartNonBlockingDelay(int ms)
 {
-    PR2 = floor(ms / (.000016));
+    PR2 = floor(ms / (.016));
     buttonDebounceTimeout = 0;
     T2CONbits.TON = 1;
 }

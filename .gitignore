@@ -1,0 +1,10 @@
+
+*.o
+*.d
+*.xml
+*.elf
+*.map
+*.hex
+*.mk
+nbproject/Makefile-genesis.properties
+*.bash
